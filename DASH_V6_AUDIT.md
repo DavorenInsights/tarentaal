@@ -71,3 +71,12 @@ Dash V6 is the flagship-quality minigame in this release. Tussle and Fladder are
 
 ## V6.1 tutorial refinement
 Jump and duck arrows are now shown only for the first 10 obstacle groups in each run. After that, the game relies on visual recognition and rhythm, reducing HUD clutter and making later play feel more skill-based.
+
+
+## V6.3 final interface and obstacle pass
+
+- The live HUD now follows a three-zone top layout: distance/best, Krrr-Rush, and mielies/multiplier.
+- Best distance is stored separately from score and updates locally.
+- Phone mode resolves to a portrait 3:4 play frame while laptop mode remains 16:9. Auto mode reacts to viewport and orientation changes.
+- Every duck-under obstacle is now a flying comic bird: hadeda, hadeda pair, crow, eagle or vulture.
+- Control buttons and status chips were reduced so the environment remains the visual focus.

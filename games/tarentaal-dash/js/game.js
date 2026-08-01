@@ -18,10 +18,28 @@ class TarentaalDashGame {
     this.canvas.height = GAME_CONFIG.canvas.height;
     this.ctx.imageSmoothingEnabled = true;
     this.ctx.imageSmoothingQuality = "high";
-    this.deviceMode = (() => { try { return localStorage.getItem('tarentaalDeviceMode') || 'auto'; } catch { return 'auto'; } })();
-    if (typeof document !== 'undefined' && document.documentElement?.setAttribute) document.documentElement.setAttribute('data-device', this.deviceMode);
-    const coarsePointer = typeof window?.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
-    this.quality = this.deviceMode === 'phone' || (this.deviceMode === 'auto' && coarsePointer) ? 'mobile' : 'desktop';
+    this.devicePreference = (() => { try { return localStorage.getItem('tarentaalDeviceMode') || 'auto'; } catch { return 'auto'; } })();
+    this.resolveDeviceMode = () => {
+      const coarsePointer = typeof window?.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+      const narrowViewport = Number(window?.innerWidth || 1280) < 760;
+      this.deviceMode = this.devicePreference === 'auto'
+        ? (coarsePointer || narrowViewport ? 'phone' : 'laptop')
+        : this.devicePreference;
+      if (typeof document !== 'undefined' && document.documentElement?.setAttribute) {
+        document.documentElement.setAttribute('data-device', this.deviceMode);
+        document.documentElement.setAttribute('data-device-preference', this.devicePreference);
+      }
+      this.quality = this.deviceMode === 'phone' ? 'mobile' : 'desktop';
+    };
+    this.resolveDeviceMode();
+    if (typeof window?.addEventListener === 'function') {
+      window.addEventListener('resize', () => {
+        if (this.devicePreference === 'auto') this.resolveDeviceMode();
+      });
+      window.addEventListener('orientationchange', () => {
+        if (this.devicePreference === 'auto') this.resolveDeviceMode();
+      });
+    }
 
     this.ui = {
       loading: $("#loadingOverlay"),
@@ -41,6 +59,8 @@ class TarentaalDashGame {
       actionWarning: $("#actionWarning"),
       score: $("#score"),
       best: $("#best"),
+      distance: $("#distanceLabel"),
+      bestDistance: $("#bestDistanceLabel"),
       speed: $("#speedLabel"),
       stage: $("#stageLabel"),
       region: $("#regionLabel"),
@@ -80,7 +100,9 @@ class TarentaalDashGame {
     this.lastTimestamp = performance.now();
     this.state = "loading";
     this.best = this.readBestScore();
+    this.bestDistance = this.readBestDistance();
     this.ui.best.textContent = String(this.best);
+    if (this.ui.bestDistance) this.ui.bestDistance.textContent = `${this.bestDistance} m`;
     this.flow = new FlowMeter(GAME_CONFIG.flow);
 
     this.input = new InputController({
@@ -151,6 +173,16 @@ class TarentaalDashGame {
 
   writeBestScore(value) {
     try { localStorage.setItem(GAME_CONFIG.storageKey, String(value)); }
+    catch { /* Private browsing can disable storage. */ }
+  }
+
+  readBestDistance() {
+    try { return Math.max(0, Number(localStorage.getItem(`${GAME_CONFIG.storageKey}:distance`) || 0)); }
+    catch { return 0; }
+  }
+
+  writeBestDistance(value) {
+    try { localStorage.setItem(`${GAME_CONFIG.storageKey}:distance`, String(value)); }
     catch { /* Private browsing can disable storage. */ }
   }
 
@@ -704,12 +736,16 @@ class TarentaalDashGame {
   }
 
   updateHud(difficulty) {
+    const distanceMetres = Math.max(0, Math.round(this.distance / 100));
     this.ui.score.textContent = String(Math.floor(this.score));
     this.ui.best.textContent = String(Math.max(this.best, Math.floor(this.score)));
+    if (this.ui.distance) this.ui.distance.textContent = `${distanceMetres.toLocaleString()} m`;
+    if (this.ui.bestDistance) this.ui.bestDistance.textContent = `${Math.max(this.bestDistance, distanceMetres).toLocaleString()} m`;
     this.ui.speed.textContent = `${(this.speed / GAME_CONFIG.difficulty.baseSpeed).toFixed(1)}x`;
     this.ui.stage.textContent = difficulty.stage.short ?? difficulty.stage.name;
     this.ui.region.textContent = (this.regionState ?? getRegionState(this.distance)).display.short;
-    this.ui.combo.textContent = `x${this.multiplier}`;
+    const liveMultiplier = this.multiplier * (this.flow.active ? GAME_CONFIG.flow.scoreMultiplier : 1);
+    this.ui.combo.textContent = `x${liveMultiplier}`;
     this.ui.shield.textContent = this.shieldActive ? `${Math.max(1, Math.ceil(this.shieldFrames / 60))}s` : "—";
     this.ui.health.textContent = `${"❤️".repeat(this.health)}${"🖤".repeat(Math.max(0, this.modifiers.maxHealth - this.health))}`;
     this.ui.corn.textContent = String(this.cornCount);
@@ -739,6 +775,12 @@ class TarentaalDashGame {
       this.best = finalScore;
       this.writeBestScore(this.best);
       this.ui.best.textContent = String(this.best);
+    }
+    const finalDistance = Math.max(0, Math.round(this.distance / 100));
+    if (finalDistance > this.bestDistance) {
+      this.bestDistance = finalDistance;
+      this.writeBestDistance(this.bestDistance);
+      if (this.ui.bestDistance) this.ui.bestDistance.textContent = `${this.bestDistance.toLocaleString()} m`;
     }
   }
 

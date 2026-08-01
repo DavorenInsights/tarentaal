@@ -4,7 +4,7 @@ A static, dependency-free browser game collection designed for GitHub Pages.
 
 ## Included games
 
-- **Tarentaal Dash V5** — the existing endless runner, preserved inside `games/tarentaal-dash/`.
+- **Tarentaal Dash V6.3 Comic Rush Edition** — the flagship endless runner with four moving South African regions, a permanent dirt road, a compact top HUD, comic bird-only duck obstacles, Krrr-Rush, responsive phone/laptop frames and local records.
 - **Tarentaal Tussle V1** — a top-down arena-survival roguelite with:
   - ten waves;
   - four auto-firing weapon systems;

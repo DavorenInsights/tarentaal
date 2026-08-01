@@ -85,32 +85,32 @@ export const OBSTACLE_DEFINITIONS = Object.freeze({
   }),
   lowHadeda: Object.freeze({
     id: "lowHadeda", label: "Lae hadeda", action: DUCK, asset: "lowHadeda",
-    width: 132, height: 76, absoluteY: 438,
-    hitbox: Object.freeze({ x: 0.08, y: 0.30, w: 0.84, h: 0.44 }),
-    earliest: 0.15, weight: 1.16, maxScale: 0.08
+    width: 146, height: 78, absoluteY: 432,
+    hitbox: Object.freeze({ x: 0.08, y: 0.27, w: 0.84, h: 0.45 }),
+    earliest: 0.15, weight: 1.20, maxScale: 0.07
   }),
-  washingLine: Object.freeze({
-    id: "washingLine", label: "Skuurafdak", action: DUCK, asset: "washingLine",
-    width: 182, height: 106, absoluteY: 425,
-    hitbox: Object.freeze({ x: 0.10, y: 0.30, w: 0.80, h: 0.36 }),
-    earliest: 0.23, weight: 0.96, maxScale: 0.06
+  hadedaPair: Object.freeze({
+    id: "hadedaPair", label: "Hadeda-paar", action: DUCK, asset: "hadedaPair",
+    width: 192, height: 88, absoluteY: 420,
+    hitbox: Object.freeze({ x: 0.06, y: 0.30, w: 0.88, h: 0.42 }),
+    earliest: 0.24, weight: 0.94, maxScale: 0.05
   }),
-  lowBranch: Object.freeze({
-    id: "lowBranch", label: "Lae tak", action: DUCK, asset: "lowBranch",
-    width: 168, height: 79, absoluteY: 430,
-    hitbox: Object.freeze({ x: 0.05, y: 0.34, w: 0.90, h: 0.34 }),
-    earliest: 0.33, weight: 0.82, maxScale: 0.08
+  lowCrow: Object.freeze({
+    id: "lowCrow", label: "Lae kraai", action: DUCK, asset: "lowCrow",
+    width: 150, height: 75, absoluteY: 438,
+    hitbox: Object.freeze({ x: 0.08, y: 0.28, w: 0.84, h: 0.42 }),
+    earliest: 0.32, weight: 0.84, maxScale: 0.07
   }),
-  suspendedSign: Object.freeze({
-    id: "suspendedSign", label: "Hangbord", action: DUCK, asset: "suspendedSign",
-    width: 158, height: 96, absoluteY: 420,
-    hitbox: Object.freeze({ x: 0.12, y: 0.34, w: 0.76, h: 0.42 }),
-    earliest: 0.43, weight: 0.72, maxScale: 0.06
+  lowEagle: Object.freeze({
+    id: "lowEagle", label: "Lae arend", action: DUCK, asset: "lowEagle",
+    width: 180, height: 88, absoluteY: 421,
+    hitbox: Object.freeze({ x: 0.07, y: 0.28, w: 0.86, h: 0.44 }),
+    earliest: 0.44, weight: 0.72, maxScale: 0.05
   }),
-  irrigationPipe: Object.freeze({
-    id: "irrigationPipe", label: "Besproeiingspyp", action: DUCK, asset: "irrigationPipe",
-    width: 188, height: 94, absoluteY: 442,
-    hitbox: Object.freeze({ x: 0.08, y: 0.20, w: 0.84, h: 0.34 }),
+  lowVulture: Object.freeze({
+    id: "lowVulture", label: "Lae aasvoël", action: DUCK, asset: "lowVulture",
+    width: 192, height: 90, absoluteY: 416,
+    hitbox: Object.freeze({ x: 0.07, y: 0.27, w: 0.86, h: 0.44 }),
     earliest: 0.58, weight: 0.62, maxScale: 0.05
   })
 });

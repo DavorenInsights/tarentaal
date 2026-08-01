@@ -26,3 +26,8 @@ A polished Afrikaans endless runner built with Canvas, JavaScript and static ass
 - Readable obstacle silhouettes and fair action transitions
 - Fast restarts and locally persisted best scores
 - Region-specific visual identity without changing collision physics
+
+
+## V6.3 visual and control pass
+
+The game now uses a compact top HUD inspired by the approved concept: distance/best on the left, Krrr-Rush in the centre and mielies/multiplier on the right. Phone mode uses a portrait 3:4 frame with landscape gameplay cropped from the left to preserve the player and reaction lane. All duck-under obstacles are comic-style birds.

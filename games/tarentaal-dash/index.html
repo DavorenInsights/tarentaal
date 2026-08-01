@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
   <meta name="theme-color" content="#14384a">
-  <meta name="description" content="Tarentaal Dash V6.1 — 'n gepoleerde Suid-Afrikaanse endless runner oor grondpaaie deur vier streke.">
-  <title>Tarentaal Dash V6.1</title>
+  <meta name="description" content="Tarentaal Dash V6.3 — 'n gepoleerde Suid-Afrikaanse endless runner oor grondpaaie deur vier streke.">
+  <title>Tarentaal Dash V6.3</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/game.css">
 </head>
 <body>
-  <main class="app" aria-label="Tarentaal Dash V6.1">
+  <main class="app" aria-label="Tarentaal Dash V6.3">
     <header class="topbar">
       <a class="hub-link" href="../../">← Speletjies</a>
       <div class="brand">
         <strong>Tarentaal Dash</strong>
-        <span>V6.1 • Grondpad Stormloop</span>
+        <span>V6.3 • Comic Rush Edition</span>
       </div>
       <div class="desktop-hint">Spring: Spasie / ↑ / W / tik &nbsp;•&nbsp; Duik: ↓ / D &nbsp;•&nbsp; Pouse: P</div>
     </header>
@@ -24,20 +24,30 @@
       <canvas id="game" width="1280" height="720" aria-label="Tarentaal Dash speletjie"></canvas>
 
       <div class="hud" aria-live="polite">
-        <div class="hud-primary">
-          <div class="score-block"><span class="hud-label">TELLING</span><strong id="score">0</strong></div>
-          <div class="best-block"><span class="hud-label">BESTE</span><strong id="best">0</strong></div>
+        <div class="top-hud">
+          <div class="distance-hud" aria-label="Afstand en beste afstand">
+            <strong id="distanceLabel">0 m</strong>
+            <span>BESTE: <b id="bestDistanceLabel">0 m</b></span>
+          </div>
+
+          <div id="flowPanel" class="flow-panel" aria-label="Krrr Rush meter">
+            <div class="flow-caption"><span>KRRR-RUSH!</span><strong id="flowLabel">0%</strong><i aria-hidden="true">⚡</i></div>
+            <div class="flow-track"><div id="flowFill" class="flow-fill"></div></div>
+            <div class="route-meta"><span id="regionLabel">Pretoria</span><span id="stageLabel">Warm</span><span id="speedLabel">1.0x</span></div>
+            <div class="difficulty-track" aria-hidden="true"><div id="trendFill" class="trend-fill"></div><div id="intensityFill" class="intensity-fill"></div></div>
+            <span id="difficultyCaption" class="sr-only">Opwarming • vloei</span>
+          </div>
+
+          <div class="resource-hud" aria-label="Versamelitems en vermenigvuldiger">
+            <div class="corn-readout"><span>🌽</span><strong id="cornCount">0</strong></div>
+            <div id="comboPill" class="multiplier-readout"><strong id="comboLabel">x1</strong></div>
+          </div>
         </div>
 
-        <div class="hud-secondary">
-          <div class="pill health-pill"><span>Veerharte</span><strong id="healthLabel">❤️❤️❤️</strong></div>
-          <div class="pill"><span>Spoed</span><strong id="speedLabel">1.0x</strong></div>
-          <div class="pill"><span>Fase</span><strong id="stageLabel">Warm</strong></div>
-          <div class="pill route-pill"><span>Roete</span><strong id="regionLabel">Pretoria</strong></div>
-          <div id="comboPill" class="pill accent"><span>Combo</span><strong id="comboLabel">x1</strong></div>
-          <div class="pill shield-pill"><span>Veer</span><strong id="shieldLabel">—</strong></div>
-          <div class="pill collectible-pill"><span>🌽</span><strong id="cornCount">0</strong></div>
-          <div class="pill collectible-pill"><span>🥔</span><strong id="potatoCount">0</strong></div>
+        <div class="status-strip">
+          <div class="status-chip health-chip"><span id="healthLabel">❤️❤️❤️</span></div>
+          <div class="status-chip shield-chip">🪶 <strong id="shieldLabel">—</strong></div>
+          <div class="status-chip potato-chip">🥔 <strong id="potatoCount">0</strong></div>
         </div>
 
         <div class="top-controls">
@@ -47,12 +57,7 @@
           <button id="fullscreenButton" class="icon-button" type="button" aria-label="Volskerm">⛶ <span>Volskerm</span></button>
         </div>
 
-        <div id="flowPanel" class="flow-panel" aria-label="Krrr Rush meter">
-          <div class="flow-caption"><span>KRRR-RUSH</span><strong id="flowLabel">0%</strong></div>
-          <div class="flow-track"><div id="flowFill" class="flow-fill"></div></div>
-          <div id="difficultyCaption" class="difficulty-caption">Opwarming • vloei</div>
-          <div class="difficulty-track" aria-hidden="true"><div id="trendFill" class="trend-fill"></div><div id="intensityFill" class="intensity-fill"></div></div>
-        </div>
+        <div class="hidden-score-data" aria-hidden="true"><span id="score">0</span><span id="best">0</span></div>
 
         <div id="actionWarning" class="action-warning">↓ DUIK — hou laag</div>
 
@@ -64,7 +69,7 @@
         <div id="loadingOverlay" class="overlay loading-overlay">
           <div class="loading-card">
             <div class="loading-bird">Krrr-krrr!</div>
-            <h1>Tarentaal Dash V6.1</h1>
+            <h1>Tarentaal Dash V6.3</h1>
             <p id="loadingText">Laai hoë-gehalte roetes… 0%</p>
             <div class="loading-track"><div id="loadingBar" class="loading-bar"></div></div>
           </div>
@@ -77,7 +82,7 @@
             <p class="lead">Spring en duik deur Pretoria, Bloemfontein, die Karoo en die Laeveld. Versamel kos en waag naby-misse om Krrr-Rush te aktiveer.</p>
             <div class="instruction-grid">
               <div class="instruction jump-instruction"><strong>↑ SPRING</strong><span>oor grondhindernisse</span></div>
-              <div class="instruction duck-instruction"><strong>↓ DUIK</strong><span>onder lae hindernisse</span></div>
+              <div class="instruction duck-instruction"><strong>↓ DUIK</strong><span>onder lae voëls</span></div>
             </div>
             <div class="feature-strip"><span>🗺️ 4 bewegende roetes</span><span>⚡ Krrr-Rush x2</span><span>❤️ 3 kanse</span></div>
             <p class="microcopy">Spasie, ↑, W of tik om te spring. Hou ↓, D of die duikknoppie. Mielies, aartappels, naby-misse en onderdeur-bonusse vul jou Rush-meter.</p>
@@ -114,7 +119,7 @@
       </div>
     </section>
 
-    <footer class="footer-note">V6.1 • Gepoleerde streeklae, altyd-op-grondpad ontwerp, dinamiese skaduwees, Krrr-Rush en leerpyle net vir die eerste 10 hindernisse.</footer>
+    <footer class="footer-note">V6.3 • Comic Rush Edition: ware phone/laptop rame, voëls-alleen duikaksie, top-HUD, bewegende streke, grondpad en Krrr-Rush.</footer>
   </main>
 
   <script type="module" src="./js/game.js"></script>
