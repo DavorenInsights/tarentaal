@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 180">
+<path d="M34 14h232" stroke="#293237" stroke-width="12" stroke-linecap="round"/>
+<path d="M88 14v42M214 14v42" stroke="#6c4129" stroke-width="9"/>
+<path d="M50 54h204l-14 91H65z" fill="#f3c24b" stroke="#293237" stroke-width="9" stroke-linejoin="round"/>
+<path d="M81 72h142l-8 53H88z" fill="#f8e5a0" stroke="#293237" stroke-width="6"/>
+<text x="151" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#8d3d25">PLAASPAD</text>
+<path d="M68 61h174" stroke="#fff4b8" stroke-width="5" opacity=".65"/>
+</svg>

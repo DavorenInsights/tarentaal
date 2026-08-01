@@ -2,133 +2,89 @@
 <html lang="af">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-  <meta name="theme-color" content="#14384a">
-  <meta name="description" content="Tarentaal Dash V5 — 'n kleurvolle Afrikaans plaas-pad runner met Veerharte en roguelite plaastalente.">
-  <title>Tarentaal Dash V5</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102f3b">
+  <meta name="description" content="Tarentaal Speletjies — speel Tarentaal Dash en Tarentaal Tussle direk in jou blaaier.">
+  <title>Tarentaal Speletjies</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./css/game.css">
+  <link rel="stylesheet" href="./css/hub.css">
 </head>
 <body>
-  <main class="app" aria-label="Tarentaal Dash V5">
-    <header class="topbar">
-      <div class="brand">
-        <strong>Tarentaal Dash</strong>
-        <span>V5 • Plaaspad-talente</span>
+  <div class="sky-glow sky-glow-one"></div>
+  <div class="sky-glow sky-glow-two"></div>
+
+  <main class="hub">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">KRRR-KRRR! • TAR­ENTAAL MINIGAME CENTRE</p>
+        <h1>Tarentaal <span>Speletjies</span></h1>
+        <p class="lead">Twee plaas-chaos speletjies. Een baie dapper tarentaal. Speel op rekenaar of selfoon — geen installasie nodig nie.</p>
       </div>
-      <div class="desktop-hint">Spring: Spasie / ↑ / W / tik &nbsp;•&nbsp; Duik: ↓ / D &nbsp;•&nbsp; Kies talent: 1 / 2 / 3</div>
+      <div class="hero-mark" aria-hidden="true">
+        <div class="bird-body"><span class="bird-eye"></span><span class="bird-beak"></span></div>
+        <div class="sound sound-one">Krrr!</div>
+        <div class="sound sound-two">Krrr!</div>
+      </div>
     </header>
 
-    <section class="game-shell">
-      <canvas id="game" width="1280" height="720" aria-label="Tarentaal Dash speletjie"></canvas>
-
-      <div class="hud" aria-live="polite">
-        <div class="hud-primary">
-          <div class="score-block">
-            <span class="hud-label">TELLING</span>
-            <strong id="score">0</strong>
-          </div>
-          <div class="best-block">
-            <span class="hud-label">BESTE</span>
-            <strong id="best">0</strong>
-          </div>
+    <section class="game-grid" aria-label="Tarentaal speletjies">
+      <article class="game-card dash-card">
+        <div class="game-art">
+          <div class="road-lines"></div>
+          <img src="./games/tarentaal-dash/assets/player/run1.png" alt="Tarentaal wat hardloop">
+          <span class="game-number">01</span>
         </div>
-
-        <div class="hud-secondary">
-          <div class="pill health-pill"><span>Veerharte</span><strong id="healthLabel">❤️❤️❤️</strong></div>
-          <div class="pill"><span>Spoed</span><strong id="speedLabel">1.0x</strong></div>
-          <div class="pill"><span>Fase</span><strong id="stageLabel">Warm</strong></div>
-          <div id="comboPill" class="pill accent"><span>Combo</span><strong id="comboLabel">x1</strong></div>
-          <div class="pill shield-pill"><span>Veer</span><strong id="shieldLabel">—</strong></div>
-          <div class="pill talent-pill"><span>Talente</span><strong id="talentCount">0</strong></div>
-          <div class="pill collectible-pill"><span>🌽</span><strong id="cornCount">0</strong></div>
-          <div class="pill collectible-pill"><span>🥔</span><strong id="potatoCount">0</strong></div>
-        </div>
-
-        <div class="top-controls">
-          <button id="pauseButton" class="icon-button" type="button" aria-label="Pouse">⏸ <span>Pouse</span></button>
-          <button id="musicButton" class="icon-button" type="button" aria-label="Musiek aan of af">🎵 <span>Musiek</span></button>
-          <button id="soundButton" class="icon-button" type="button" aria-label="Klankeffekte aan of af">🔊 <span>SFX</span></button>
-          <button id="fullscreenButton" class="icon-button" type="button" aria-label="Volskerm">⛶ <span>Volskerm</span></button>
-        </div>
-
-        <div class="difficulty-panel" aria-label="Moeilikheid">
-          <div class="difficulty-track"><div id="trendFill" class="trend-fill"></div><div id="intensityFill" class="intensity-fill"></div></div>
-          <div id="difficultyCaption" class="difficulty-caption">Opwarming • vloei</div>
-        </div>
-
-        <div id="actionWarning" class="action-warning">↓ DUIK — hou laag</div>
-
-        <div class="mobile-controls" aria-label="Mobiele beheer">
-          <button id="jumpButton" class="mobile-action jump-action" type="button"><span class="action-icon">↑</span><span>SPRING</span></button>
-          <button id="duckButton" class="mobile-action duck-action" type="button"><span class="action-icon">↓</span><span>DUIK</span></button>
-        </div>
-
-        <div id="loadingOverlay" class="overlay loading-overlay">
-          <div class="loading-card">
-            <div class="loading-bird">Krrr-krrr!</div>
-            <h1>Tarentaal Dash V5</h1>
-            <p id="loadingText">Laai plaas-pad kuns… 0%</p>
-            <div class="loading-track"><div id="loadingBar" class="loading-bar"></div></div>
-          </div>
-        </div>
-
-        <div id="startOverlay" class="overlay hidden">
-          <div class="card start-card">
-            <div class="eyebrow">Billike Dino-modus • Nou met plaastalente</div>
-            <h1>Tarentaal Dash</h1>
-            <p class="lead">Hardloop, versamel en oorleef. Jy het drie Veerharte en kies 'n nuwe talent wanneer die plaaspad versnel.</p>
-            <div class="instruction-grid">
-              <div class="instruction jump-instruction"><strong>↑ SPRING</strong><span>oor grondhindernisse</span></div>
-              <div class="instruction duck-instruction"><strong>↓ DUIK</strong><span>onder lughindernisse</span></div>
+        <div class="game-copy">
+          <div class="card-heading">
+            <div>
+              <p class="tag">ENDLESS RUNNER</p>
+              <h2>Tarentaal Dash</h2>
             </div>
-            <div class="feature-strip"><span>❤️ 3 kanse</span><span>🌾 4 talentkeuses</span><span>🪶 Veerkrag</span></div>
-            <p class="microcopy">Spasie, ↑, W of tik om te spring. Hou ↓, D of die duikknoppie. Botsings breek jou combo en kos 'n Veerhart.</p>
-            <button id="startButton" class="primary-button" type="button">Krrr-krrr! Begin</button>
-            <div class="track-credit">🎵 Dusty Farm Sprint</div>
+            <span class="status live">SPEEL NOU</span>
           </div>
+          <p>Spring, duik, versamel mielies en bou jou plaaspad-talente terwyl die spoed al hoe wilder raak.</p>
+          <div class="features"><span>⚡ V5</span><span>❤️ Veerharte</span><span>🌽 Combo's</span></div>
+          <a class="play-button" href="./games/tarentaal-dash/">Begin hardloop <span>→</span></a>
         </div>
+      </article>
 
-        <div id="pauseOverlay" class="overlay pause-overlay hidden">
-          <div class="pause-card"><strong>⏸ Gepouseer</strong><span>Druk P, Escape of Hervat</span></div>
+      <article class="game-card tussle-card">
+        <div class="game-art arena-art">
+          <div class="arena-ring ring-one"></div>
+          <div class="arena-ring ring-two"></div>
+          <div class="enemy-dot enemy-one">🐔</div>
+          <div class="enemy-dot enemy-two">🐐</div>
+          <div class="enemy-dot enemy-three">🐗</div>
+          <img src="./games/tarentaal-tussle/assets/player/tarentaal.png" alt="Tarentaal in 'n plaasarena">
+          <span class="game-number">02</span>
         </div>
-
-        <div id="upgradeOverlay" class="overlay upgrade-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="upgradeTitle">
-          <div class="upgrade-card">
-            <div class="eyebrow">Plaaspad-kontrolepunt</div>
-            <h2 id="upgradeTitle">Kies 'n talent</h2>
-            <p id="upgradeSubtitle">Maak hierdie rondte jou eie.</p>
-            <div id="upgradeChoices" class="upgrade-choices"></div>
-            <p class="upgrade-hint">Tik 'n kaart of druk 1, 2 of 3.</p>
-          </div>
-        </div>
-
-        <div id="gameOverOverlay" class="overlay hidden">
-          <div class="card result-card">
-            <div class="eyebrow">Die plaaspad wen hierdie rondte</div>
-            <h1>Krrr-krrr!</h1>
-            <div class="final-score"><span>Telling</span><strong id="finalScore">0</strong></div>
-            <div class="rank">Rang: <strong id="finalRank">Verdwaalde Kuiken</strong></div>
-            <div class="result-grid">
-              <div><span>Beste combo</span><strong id="finalCombo">0</strong></div>
-              <div><span>Hoogste spoed</span><strong id="finalSpeed">1.0x</strong></div>
-              <div><span>Naby-bonusse</span><strong id="finalNear">0</strong></div>
-              <div><span>Onderdeur</span><strong id="finalDuck">0</strong></div>
-              <div><span>Skild-reddings</span><strong id="finalSaves">0</strong></div>
-              <div><span>Botsings oorleef</span><strong id="finalHits">0</strong></div>
-              <div><span>Mielies</span><strong id="finalCorn">0</strong></div>
-              <div><span>Aartappels</span><strong id="finalPotato">0</strong></div>
+        <div class="game-copy">
+          <div class="card-heading">
+            <div>
+              <p class="tag">ARENA SURVIVAL</p>
+              <h2>Tarentaal Tussle</h2>
             </div>
-            <div id="finalTalents" class="final-talents">Geen talente gekies nie.</div>
-            <button id="restartButton" class="primary-button" type="button">Hardloop weer</button>
+            <span class="status new">NUUT</span>
           </div>
+          <p>Beweeg, skiet outomaties en bou 'n belaglike plaasarsenaal om tien golwe se chaos te oorleef.</p>
+          <div class="features"><span>🔫 4 wapens</span><span>⬆️ Talente</span><span>👑 2 base</span></div>
+          <a class="play-button" href="./games/tarentaal-tussle/">Betree die arena <span>→</span></a>
         </div>
-      </div>
+      </article>
+
+      <article class="game-card locked-card" aria-label="Derde speletjie kom later">
+        <div class="locked-art"><span>?</span></div>
+        <div class="game-copy">
+          <div class="card-heading"><div><p class="tag">VOLGENDE OP DIE PLAAS</p><h2>Geheime Speletjie</h2></div><span class="status locked">BINNEKORT</span></div>
+          <p>Die volgende tarentaal-avontuur word nog agter die skuur gebou.</p>
+        </div>
+      </article>
     </section>
 
-    <footer class="footer-note">V5 behou die gevalideerde hindernisfisika en voeg Veerharte plus vier roguelite talentkeuses per lang rondte by.</footer>
+    <footer>
+      <strong>Tarentaal Speletjies</strong>
+      <span>Gebou vir pret, plaas-chaos en 'n harde “Krrr-krrr!”</span>
+    </footer>
   </main>
-
-  <script type="module" src="./js/game.js"></script>
 </body>
 </html>

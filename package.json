@@ -1,11 +1,12 @@
 {
-  "name": "tarentaal-dash-v5",
-  "version": "5.0.0",
+  "name": "tarentaal-minigame-centre",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/spacing.test.mjs && node tests/upgrades.test.mjs && node tests/runtime-smoke.test.mjs",
-    "check": "node --check js/config.js && node --check js/assets.js && node --check js/difficulty.js && node --check js/obstacles.js && node --check js/upgrades.js && node --check js/audio.js && node --check js/input.js && node --check js/game.js",
-    "test:runtime": "node tests/runtime-smoke.test.mjs"
+    "check": "node --check games/tarentaal-tussle/js/game.js && node --check games/tarentaal-dash/js/game.js",
+    "test:tussle": "node games/tarentaal-tussle/tests/runtime-smoke.mjs",
+    "test:dash": "cd games/tarentaal-dash && npm test",
+    "test": "npm run check && npm run test:tussle && npm run test:dash"
   }
 }
