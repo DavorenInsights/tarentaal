@@ -667,7 +667,10 @@ class TarentaalDashGame {
     this.nearestObstacle = upcoming;
     this.actionWarning = null;
 
-    if (!upcoming) {
+    const tutorialLimit = GAME_CONFIG.rendering.tutorialWarningGroups ?? 10;
+    const tutorialGroup = Number.isFinite(upcoming?.groupIndex) ? upcoming.groupIndex : Number.POSITIVE_INFINITY;
+
+    if (!upcoming || tutorialGroup >= tutorialLimit) {
       this.ui.actionWarning.classList.remove("show");
       return;
     }

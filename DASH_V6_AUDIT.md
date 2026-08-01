@@ -67,3 +67,7 @@ Old root-level Dash assets, scripts and tests duplicated the modular `/games/tar
 ## Release status
 
 Dash V6 is the flagship-quality minigame in this release. Tussle and Fladder are preserved unchanged so they can receive their own focused production passes later.
+
+
+## V6.1 tutorial refinement
+Jump and duck arrows are now shown only for the first 10 obstacle groups in each run. After that, the game relies on visual recognition and rhythm, reducing HUD clutter and making later play feel more skill-based.
