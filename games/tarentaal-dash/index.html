@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
   <meta name="theme-color" content="#14384a">
-  <meta name="description" content="Tarentaal Dash V5 — 'n kleurvolle Afrikaans plaas-pad runner met Veerharte en roguelite plaastalente.">
-  <title>Tarentaal Dash V5</title>
+  <meta name="description" content="Tarentaal Dash V5.2 — 'n kleurvolle Afrikaans endless runner met Veerharte, combos en suiwer dino-agtige momentum.">
+  <title>Tarentaal Dash V5.2</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/game.css">
 </head>
@@ -15,9 +15,9 @@
       <a class="hub-link" href="../../">← Speletjies</a>
       <div class="brand">
         <strong>Tarentaal Dash</strong>
-        <span>V5 • Plaaspad-talente</span>
+        <span>V5.2 • Streeksroete endless run</span>
       </div>
-      <div class="desktop-hint">Spring: Spasie / ↑ / W / tik &nbsp;•&nbsp; Duik: ↓ / D &nbsp;•&nbsp; Kies talent: 1 / 2 / 3</div>
+      <div class="desktop-hint">Spring: Spasie / ↑ / W / tik &nbsp;•&nbsp; Duik: ↓ / D &nbsp;•&nbsp; Geen talent-stoppe nie</div>
     </header>
 
     <section class="game-shell">
@@ -38,6 +38,7 @@
         <div class="hud-secondary">
           <div class="pill health-pill"><span>Veerharte</span><strong id="healthLabel">❤️❤️❤️</strong></div>
           <div class="pill"><span>Spoed</span><strong id="speedLabel">1.0x</strong></div>
+          <div class="pill route-pill"><span>Roete</span><strong id="regionLabel">Pretoria</strong></div>
           <div class="pill"><span>Fase</span><strong id="stageLabel">Warm</strong></div>
           <div id="comboPill" class="pill accent"><span>Combo</span><strong id="comboLabel">x1</strong></div>
           <div class="pill shield-pill"><span>Veer</span><strong id="shieldLabel">—</strong></div>
@@ -76,14 +77,14 @@
 
         <div id="startOverlay" class="overlay hidden">
           <div class="card start-card">
-            <div class="eyebrow">Billike Dino-modus • Nou met plaastalente</div>
+            <div class="eyebrow">Billike Dino-modus • Suiwer endless run</div>
             <h1>Tarentaal Dash</h1>
-            <p class="lead">Hardloop, versamel en oorleef. Jy het drie Veerharte en kies 'n nuwe talent wanneer die plaaspad versnel.</p>
+            <p class="lead">Hardloop, versamel en oorleef deur Pretoria, Bloemfontein, die Karoo en die Laeveld. Geen roguelite onderbrekings nie — die roete word net vinniger en moeiliker.</p>
             <div class="instruction-grid">
               <div class="instruction jump-instruction"><strong>↑ SPRING</strong><span>oor grondhindernisse</span></div>
               <div class="instruction duck-instruction"><strong>↓ DUIK</strong><span>onder lughindernisse</span></div>
             </div>
-            <div class="feature-strip"><span>❤️ 3 kanse</span><span>🌾 4 talentkeuses</span><span>🪶 Veerkrag</span></div>
+            <div class="feature-strip"><span>❤️ 3 kanse</span><span>🗺️ 4 streke</span><span>🪶 Veerkrag</span></div>
             <p class="microcopy">Spasie, ↑, W of tik om te spring. Hou ↓, D of die duikknoppie. Botsings breek jou combo en kos 'n Veerhart.</p>
             <button id="startButton" class="primary-button" type="button">Krrr-krrr! Begin</button>
             <div class="track-credit">🎵 Dusty Farm Sprint</div>
@@ -120,14 +121,14 @@
               <div><span>Mielies</span><strong id="finalCorn">0</strong></div>
               <div><span>Aartappels</span><strong id="finalPotato">0</strong></div>
             </div>
-            <div id="finalTalents" class="final-talents">Geen talente gekies nie.</div>
+            <div id="finalTalents" class="final-talents">Suiwer endless run — geen talente in hierdie modus.</div>
             <button id="restartButton" class="primary-button" type="button">Hardloop weer</button>
           </div>
         </div>
       </div>
     </section>
 
-    <footer class="footer-note">V5 behou die gevalideerde hindernisfisika en voeg Veerharte plus vier roguelite talentkeuses per lang rondte by.</footer>
+    <footer class="footer-note">V5.2 • Endless run deur Pretoria, Bloemfontein, die Karoo en die Laeveld, met gladde roete-oorgange.</footer>
   </main>
 
   <script type="module" src="./js/game.js"></script>

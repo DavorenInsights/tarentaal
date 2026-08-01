@@ -486,3 +486,15 @@ canvas {
   .upgrade-description { font-size: 7.5px; line-height: 1.2; }
   .final-talents { font-size: 9px; }
 }
+
+html[data-device="phone"] .desktop-hint{display:none}
+html[data-device="phone"] .mobile-controls{display:flex}
+html[data-device="phone"] .topbar{min-height:38px;padding:0 7px 4px}
+html[data-device="phone"] .hud-secondary{top:68px;max-width:72%;gap:4px}
+html[data-device="phone"] .top-controls .icon-button span{display:none}
+html[data-device="phone"] .app{padding:6px 8px 12px}
+html[data-device="laptop"] .mobile-controls{display:none}
+
+.route-pill{background:rgba(233,220,255,.94)}
+.route-pill strong{max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:620px){.route-pill{display:none}}

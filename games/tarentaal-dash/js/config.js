@@ -1,5 +1,5 @@
 export const GAME_CONFIG = Object.freeze({
-  version: "5.0.0",
+  version: "5.1.0",
   storageKey: "tarentaalDashV5Best",
   legacyStorageKeys: Object.freeze(["tarentaalDashV4Best"]),
   canvas: Object.freeze({ width: 1280, height: 720, groundY: 598 }),
@@ -42,6 +42,7 @@ export const GAME_CONFIG = Object.freeze({
     optionalGapMax: 470,
     actionChangeExtra: 65
   }),
+  modes: Object.freeze({ talentsEnabled: false }),
   progression: Object.freeze({
     baseHealth: 3,
     damageInvulnerabilityFrames: 105,
@@ -61,6 +62,8 @@ export const GAME_CONFIG = Object.freeze({
   }),
   rendering: Object.freeze({
     dayCycleDistance: 28000,
+    regionDistance: 18000,
+    regionTransitionDistance: 2200,
     warningDistanceBase: 560,
     warningSpeedFrames: 27,
     cameraShakeDecay: 0.82

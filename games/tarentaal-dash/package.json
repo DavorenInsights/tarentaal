@@ -1,11 +1,11 @@
 {
   "name": "tarentaal-dash-v5",
-  "version": "5.0.0",
+  "version": "5.2.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/spacing.test.mjs && node tests/upgrades.test.mjs && node tests/runtime-smoke.test.mjs",
-    "check": "node --check js/config.js && node --check js/assets.js && node --check js/difficulty.js && node --check js/obstacles.js && node --check js/upgrades.js && node --check js/audio.js && node --check js/input.js && node --check js/game.js",
+    "test": "node tests/spacing.test.mjs && node tests/regions.test.mjs && node tests/upgrades.test.mjs && node tests/runtime-smoke.test.mjs",
+    "check": "node --check js/config.js && node --check js/assets.js && node --check js/difficulty.js && node --check js/obstacles.js && node --check js/regions.js && node --check js/upgrades.js && node --check js/audio.js && node --check js/input.js && node --check js/game.js",
     "test:runtime": "node tests/runtime-smoke.test.mjs"
   }
 }

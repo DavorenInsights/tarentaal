@@ -52,7 +52,7 @@ const ids = [
   "game", "loadingOverlay", "loadingBar", "loadingText", "startOverlay", "gameOverOverlay",
   "pauseOverlay", "upgradeOverlay", "upgradeChoices", "upgradeSubtitle", "startButton", "restartButton", "pauseButton", "musicButton", "soundButton",
   "fullscreenButton", "jumpButton", "duckButton", "actionWarning", "score", "best", "speedLabel",
-  "stageLabel", "comboLabel", "comboPill", "shieldLabel", "healthLabel", "talentCount", "cornCount", "potatoCount", "trendFill",
+  "stageLabel", "regionLabel", "comboLabel", "comboPill", "shieldLabel", "healthLabel", "talentCount", "cornCount", "potatoCount", "trendFill",
   "intensityFill", "difficultyCaption", "finalScore", "finalRank", "finalCombo", "finalSpeed",
   "finalNear", "finalDuck", "finalSaves", "finalHits", "finalTalents", "finalCorn", "finalPotato"
 ];
@@ -189,8 +189,13 @@ assert.equal(game.state, "running", "A physics-aware autoplay run should survive
 assert.ok(game.distance > 100000, "The autoplay run should cover a long distance");
 assert.ok(game.score > 1000, "The score should increase over a long run");
 assert.ok(game.scheduler.groupIndex > 35, "Obstacle scheduling should produce many groups");
-assert.ok(upgradesChosen >= 3, "A long run should present several talent choices");
-assert.equal(game.chosenUpgrades.length, upgradesChosen, "Chosen talents should be recorded");
+if (GAME_CONFIG.modes?.talentsEnabled) {
+  assert.ok(upgradesChosen >= 3, "A long run should present several talent choices");
+  assert.equal(game.chosenUpgrades.length, upgradesChosen, "Chosen talents should be recorded");
+} else {
+  assert.equal(upgradesChosen, 0, "Endless mode should not pause for talents");
+  assert.equal(game.chosenUpgrades.length, 0, "No talents should be recorded in endless mode");
+}
 assert.ok(Number.isFinite(game.speed), "Speed should remain finite");
 
 // Damage should consume Veerharte before ending the run.

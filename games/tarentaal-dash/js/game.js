@@ -4,6 +4,7 @@ import { AudioManager } from "./audio.js";
 import { DifficultyDirector, clamp } from "./difficulty.js";
 import { InputController } from "./input.js";
 import { ObstacleScheduler } from "./obstacles.js";
+import { drawRegionalBackground, getRegionState } from "./regions.js";
 import { applyUpgrade, createDefaultModifiers, draftUpgradeChoices } from "./upgrades.js";
 
 const $ = selector => document.querySelector(selector);
@@ -14,6 +15,8 @@ class TarentaalDashGame {
     this.ctx = this.canvas.getContext("2d", { alpha: false });
     this.canvas.width = GAME_CONFIG.canvas.width;
     this.canvas.height = GAME_CONFIG.canvas.height;
+    this.deviceMode = (() => { try { return localStorage.getItem('tarentaalDeviceMode') || 'auto'; } catch { return 'auto'; } })();
+    if (typeof document !== 'undefined' && document.documentElement?.setAttribute) document.documentElement.setAttribute('data-device', this.deviceMode);
 
     this.ui = {
       loading: $("#loadingOverlay"),
@@ -38,6 +41,7 @@ class TarentaalDashGame {
       best: $("#best"),
       speed: $("#speedLabel"),
       stage: $("#stageLabel"),
+      region: $("#regionLabel"),
       combo: $("#comboLabel"),
       comboPill: $("#comboPill"),
       shield: $("#shieldLabel"),
@@ -71,6 +75,10 @@ class TarentaalDashGame {
     this.state = "loading";
     this.best = this.readBestScore();
     this.ui.best.textContent = String(this.best);
+    if (!GAME_CONFIG.modes.talentsEnabled) {
+      document.querySelector?.('.talent-pill')?.classList?.add('hidden');
+      this.ui.upgrade?.classList?.add('hidden');
+    }
 
     this.input = new InputController({
       canvas: this.canvas,
@@ -189,6 +197,7 @@ class TarentaalDashGame {
     this.shake = 0;
     this.lastStageName = DIFFICULTY_STAGES[0].name;
     this.lastEvent = "normal";
+    this.lastRegionSerial = 0;
     this.eventAnnouncementCooldown = 0;
     this.nearestObstacle = null;
     this.actionWarning = null;
@@ -297,6 +306,7 @@ class TarentaalDashGame {
     if (this.pendingUpgrade) this.upgradeWaitFrames += dt;
 
     this.handleDifficultyFeedback(difficulty);
+    this.handleRegionFeedback();
     this.scheduler.ensureAhead({
       distance: this.distance,
       speed: this.speed,
@@ -324,7 +334,7 @@ class TarentaalDashGame {
       this.addPopup(`${difficulty.stage.name}! +${bonus}`, GAME_CONFIG.player.x + 140, this.player.y - 28, "#fff1a8");
       this.audio.playStage(stageIndex);
       this.lastStageName = difficulty.stage.name;
-      if (stageIndex > 0) {
+      if (stageIndex > 0 && GAME_CONFIG.modes.talentsEnabled) {
         this.pendingUpgrade = { stageIndex, stageName: difficulty.stage.name };
         this.upgradeWaitFrames = 0;
       }
@@ -626,6 +636,7 @@ class TarentaalDashGame {
   }
 
   maybeOpenUpgrade() {
+    if (!GAME_CONFIG.modes.talentsEnabled) return;
     if (!this.pendingUpgrade || this.state !== "running" || !this.player.grounded) return;
     const safeAhead = Math.max(
       GAME_CONFIG.progression.upgradeSafeAheadBase,
@@ -718,11 +729,20 @@ class TarentaalDashGame {
     }
   }
 
+  handleRegionFeedback() {
+    const regionState = getRegionState(this.distance);
+    if (regionState.displaySerial === this.lastRegionSerial) return;
+    this.lastRegionSerial = regionState.displaySerial;
+    this.addPopup(`📍 ${regionState.display.name}`, GAME_CONFIG.canvas.width - 220, 195, regionState.display.accent);
+    this.audio.playStage((regionState.displaySerial % 4) + 1);
+  }
+
   updateHud(difficulty) {
     this.ui.score.textContent = String(Math.floor(this.score));
     this.ui.best.textContent = String(this.best);
     this.ui.speed.textContent = `${(this.speed / GAME_CONFIG.difficulty.baseSpeed).toFixed(1)}x`;
     this.ui.stage.textContent = difficulty.stage.short ?? difficulty.stage.name;
+    this.ui.region.textContent = getRegionState(this.distance).display.short;
     this.ui.combo.textContent = `x${this.multiplier}`;
     this.ui.shield.textContent = this.shieldActive ? `${Math.max(1, Math.ceil(this.shieldFrames / 60))}s` : "—";
     this.ui.health.textContent = `${"❤️".repeat(this.health)}${"🖤".repeat(Math.max(0, this.modifiers.maxHealth - this.health))}`;
@@ -769,9 +789,11 @@ class TarentaalDashGame {
     this.ui.finalDuck.textContent = String(this.duckDodges);
     this.ui.finalSaves.textContent = String(this.shieldSaves);
     this.ui.finalHits.textContent = String(this.damageTaken);
-    this.ui.finalTalents.textContent = this.chosenUpgrades.length
-      ? this.chosenUpgrades.map(item => `${item.definition.icon} ${item.definition.name} ${item.level}`).join(" • ")
-      : "Geen talente gekies nie.";
+    this.ui.finalTalents.textContent = !GAME_CONFIG.modes.talentsEnabled
+      ? "Suiwer endless run — geen talente in hierdie modus."
+      : this.chosenUpgrades.length
+        ? this.chosenUpgrades.map(item => `${item.definition.icon} ${item.definition.name} ${item.level}`).join(" • ")
+        : "Geen talente gekies nie.";
     this.ui.finalCorn.textContent = String(this.cornCount);
     this.ui.finalPotato.textContent = String(this.potatoCount);
     this.ui.gameOver.classList.remove("hidden");
@@ -888,7 +910,7 @@ class TarentaalDashGame {
     context.save();
     context.translate(shakeX, shakeY);
     context.clearRect(-20, -20, width + 40, height + 40);
-    context.drawImage(this.images.background, 0, 0, width, height);
+    drawRegionalBackground(context, this.distance, width, height, GAME_CONFIG.canvas.groundY);
     this.drawSky(env);
     this.drawBackgroundBirds(env);
     this.drawScenery();
