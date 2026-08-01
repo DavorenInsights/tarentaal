@@ -5,7 +5,7 @@ A static, dependency-free browser game collection designed for GitHub Pages.
 ## Included games
 
 - **Tarentaal Dash V5** — the existing endless runner, preserved inside `games/tarentaal-dash/`.
-- **Tarentaal Tussle V1** — a new top-down arena-survival roguelite with:
+- **Tarentaal Tussle V1** — a top-down arena-survival roguelite with:
   - ten waves;
   - four auto-firing weapon systems;
   - level-up choices;
@@ -14,6 +14,14 @@ A static, dependency-free browser game collection designed for GitHub Pages.
   - keyboard and mobile joystick controls;
   - pause, sound and fullscreen controls;
   - a local best score.
+
+- **Tarentaal Fladder V1** — a farm-themed rhythm-flight game with:
+  - five obstacle styles;
+  - stamina-based flapping;
+  - mielie pickups and near-miss bonuses;
+  - a temporary Veerkrag shield;
+  - changing day/night scenery;
+  - medals and a local best score.
 
 ## Deploy to GitHub Pages
 
@@ -45,7 +53,8 @@ Open `http://localhost:8000`.
 ├── assets/
 └── games/
     ├── tarentaal-dash/
-    └── tarentaal-tussle/
+    ├── tarentaal-tussle/
+    └── tarentaal-fladder/
 ```
 
 All paths are relative and no database, framework or build step is required.
