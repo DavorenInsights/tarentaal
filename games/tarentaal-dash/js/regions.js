@@ -294,7 +294,34 @@ function drawLowveld(context, distance, width, height, groundY, region) {
   }
 }
 
-function drawSingleRegion(context, region, distance, width, height, groundY) {
+function drawRegionImage(context, image, width, height) {
+  if (!image) return false;
+  const iw = image.naturalWidth || image.width;
+  const ih = image.naturalHeight || image.height;
+  if (!iw || !ih) return false;
+  const scale = Math.max(width / iw, height / ih);
+  const drawW = iw * scale;
+  const drawH = ih * scale;
+  const x = (width - drawW) / 2;
+  const y = (height - drawH) / 2;
+  context.drawImage(image, x, y, drawW, drawH);
+  return true;
+}
+
+function drawSingleRegion(context, region, distance, width, height, groundY, images = null) {
+  const imageKey = region.id === "pretoria"
+    ? "regionPretoria"
+    : region.id === "bloemfontein"
+      ? "regionBloemfontein"
+      : region.id === "karoo"
+        ? "regionKaroo"
+        : "regionLowveld";
+
+  const image = images?.[imageKey];
+  if (drawRegionImage(context, image, width, height)) {
+    return;
+  }
+
   fillGradient(context, region, width, groundY);
   if (region.id === "pretoria") drawPretoria(context, distance, width, height, groundY, region);
   else if (region.id === "bloemfontein") drawBloemfontein(context, distance, width, height, groundY, region);
@@ -302,13 +329,13 @@ function drawSingleRegion(context, region, distance, width, height, groundY) {
   else drawLowveld(context, distance, width, height, groundY, region);
 }
 
-export function drawRegionalBackground(context, distance, width, height, groundY) {
+export function drawRegionalBackground(context, images, distance, width, height, groundY) {
   const state = getRegionState(distance);
   context.save();
-  drawSingleRegion(context, state.current, distance, width, height, groundY);
+  drawSingleRegion(context, state.current, distance, width, height, groundY, images);
   if (state.transition > 0) {
     context.globalAlpha = state.transition;
-    drawSingleRegion(context, state.next, distance, width, height, groundY);
+    drawSingleRegion(context, state.next, distance, width, height, groundY, images);
   }
   context.restore();
   return state;

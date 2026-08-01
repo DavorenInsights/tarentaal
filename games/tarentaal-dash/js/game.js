@@ -910,7 +910,7 @@ class TarentaalDashGame {
     context.save();
     context.translate(shakeX, shakeY);
     context.clearRect(-20, -20, width + 40, height + 40);
-    drawRegionalBackground(context, this.distance, width, height, GAME_CONFIG.canvas.groundY);
+    drawRegionalBackground(context, this.images, this.distance, width, height, GAME_CONFIG.canvas.groundY);
     this.drawSky(env);
     this.drawBackgroundBirds(env);
     this.drawScenery();

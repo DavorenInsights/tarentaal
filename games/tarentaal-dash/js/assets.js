@@ -26,8 +26,8 @@ export const IMAGE_ASSETS = Object.freeze({
   mudPuddle: "./assets/obstacles/mud_puddle.svg",
   wheelbarrow: "./assets/obstacles/wheelbarrow.svg",
   mielieSacks: "./assets/obstacles/mielie_sacks.svg",
-  lowHadeda: "./assets/obstacles/low_hadeda.svg",
-  washingLine: "./assets/obstacles/washing_line.svg",
+  lowHadeda: "./assets/obstacles/low_hadeda.png",
+  washingLine: "./assets/obstacles/barn_awning.svg",
   lowBranch: "./assets/obstacles/low_branch.svg",
   suspendedSign: "./assets/obstacles/suspended_sign.svg",
   irrigationPipe: "./assets/obstacles/irrigation_pipe.svg",
@@ -38,7 +38,11 @@ export const IMAGE_ASSETS = Object.freeze({
   grass2: "./assets/scenery/grass2.png",
   grass3: "./assets/scenery/grass3.png",
   sign1: "./assets/scenery/sign1.png",
-  sign2: "./assets/scenery/sign2.png"
+  sign2: "./assets/scenery/sign2.png",
+  regionPretoria: "./assets/scenery/regions/pretoria.png",
+  regionBloemfontein: "./assets/scenery/regions/bloemfontein.png",
+  regionKaroo: "./assets/scenery/regions/karoo.png",
+  regionLowveld: "./assets/scenery/regions/lowveld.png"
 });
 
 export class AssetLoader {

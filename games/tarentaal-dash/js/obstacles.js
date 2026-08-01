@@ -90,7 +90,7 @@ export const OBSTACLE_DEFINITIONS = Object.freeze({
     earliest: 0.15, weight: 1.16, maxScale: 0.08
   }),
   washingLine: Object.freeze({
-    id: "washingLine", label: "Wasgoedlyn", action: DUCK, asset: "washingLine",
+    id: "washingLine", label: "Skuurafdak", action: DUCK, asset: "washingLine",
     width: 182, height: 106, absoluteY: 425,
     hitbox: Object.freeze({ x: 0.10, y: 0.30, w: 0.80, h: 0.36 }),
     earliest: 0.23, weight: 0.96, maxScale: 0.06

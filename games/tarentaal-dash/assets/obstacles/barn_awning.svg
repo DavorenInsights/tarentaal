@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="182" height="106" viewBox="0 0 182 106" fill="none">
+  <defs>
+    <linearGradient id="roof" x1="91" y1="0" x2="91" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D56A3C"/>
+      <stop offset="1" stop-color="#A93F24"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="91" y1="42" x2="91" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E6C79B"/>
+      <stop offset="1" stop-color="#C79A64"/>
+    </linearGradient>
+  </defs>
+  <path d="M8 36 L42 10 H140 L174 36 Z" fill="url(#roof)" stroke="#6D2314" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="20" y="36" width="142" height="20" rx="6" fill="#7B311F" stroke="#5D2013" stroke-width="6"/>
+  <rect x="29" y="52" width="18" height="44" rx="5" fill="url(#wood)" stroke="#8B5A2B" stroke-width="6"/>
+  <rect x="135" y="52" width="18" height="44" rx="5" fill="url(#wood)" stroke="#8B5A2B" stroke-width="6"/>
+  <rect x="54" y="56" width="74" height="12" rx="5" fill="#F4E4C2" opacity="0.9"/>
+  <path d="M54 78 H128" stroke="#F4E4C2" stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+</svg>

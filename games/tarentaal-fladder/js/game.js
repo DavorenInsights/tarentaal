@@ -1,5 +1,7 @@
 const canvas = document.querySelector('#game');
-const portraitMode = typeof window.matchMedia === 'function' && window.matchMedia('(orientation: portrait)').matches && Number(window.innerWidth || 9999) < 700;
+const storedDeviceMode = (() => { try { return localStorage.getItem('tarentaalDeviceMode') || 'auto'; } catch { return 'auto'; } })();
+if (typeof document !== 'undefined' && document.documentElement?.setAttribute) document.documentElement.setAttribute('data-device', storedDeviceMode);
+const portraitMode = storedDeviceMode === 'phone' || (storedDeviceMode !== 'laptop' && typeof window.matchMedia === 'function' && window.matchMedia('(orientation: portrait)').matches && Number(window.innerWidth || 9999) < 700);
 if (portraitMode) { canvas.width = 720; canvas.height = 1280; }
 const ctx = canvas.getContext('2d');
 const W = canvas.width;
@@ -57,8 +59,10 @@ class SoundEngine {
 }
 const sound = new SoundEngine();
 
-const birdImage = new Image();
-birdImage.src = './assets/player/tarentaal-fly.png';
+const birdFrames = { neutral:new Image(), up:new Image(), down:new Image() };
+birdFrames.neutral.src = './assets/player/tarentaal-fly.png';
+birdFrames.up.src = './assets/player/tarentaal-flap-up.png';
+birdFrames.down.src = './assets/player/tarentaal-flap-down.png';
 const cornImage = new Image();
 cornImage.src = './assets/collectibles/corn.png';
 const featherImage = new Image();
@@ -72,7 +76,7 @@ const palettes = [
 ];
 
 function initialBird() {
-  return { x:W * .26, y:H * .47, vy:0, radius:26, angle:0, stamina:100, shield:0, invuln:0 };
+  return { x:W * .26, y:H * .47, vy:0, radius:26, angle:0, stamina:100, shield:0, invuln:0, flapPose:0 };
 }
 
 function makeClouds() {
@@ -119,6 +123,7 @@ function flap(initial = false) {
   }
   const strength = initial ? 430 : lerp(390, 505, b.stamina / 100);
   b.vy = -strength;
+  b.flapPose = 0.18;
   b.stamina = Math.max(0, b.stamina - (initial ? 0 : 14));
   spawnFlapParticles();
   sound.flap();
@@ -189,6 +194,7 @@ function update(dt) {
   game.distance += game.speed * dt / 10;
 
   b.stamina = Math.min(100, b.stamina + dt * (b.vy > 0 ? 29 : 23));
+  b.flapPose = Math.max(0, b.flapPose - dt);
   b.shield = Math.max(0, b.shield - dt);
   b.invuln = Math.max(0, b.invuln - dt);
   b.vy = Math.min(720, b.vy + 1430 * dt);
@@ -626,8 +632,9 @@ function drawBird() {
   }
   if(b.invuln>0&&Math.floor(b.invuln*14)%2===0)ctx.globalAlpha=.35;
   ctx.shadowColor='rgba(0,0,0,.3)';ctx.shadowBlur=14;ctx.shadowOffsetY=10;
-  if(birdImage.complete&&birdImage.naturalWidth){
-    ctx.drawImage(birdImage,-43,-46,86,92);
+  const sprite = b.flapPose > .11 ? birdFrames.up : b.flapPose > .03 ? birdFrames.down : b.vy < -80 ? birdFrames.up : birdFrames.neutral;
+  if(sprite.complete&&sprite.naturalWidth){
+    ctx.drawImage(sprite,-43,-46,86,92);
   }else{
     ctx.font='66px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🐦',0,0);
   }

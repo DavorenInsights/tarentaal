@@ -14,3 +14,13 @@
   .start-card .instruction-grid strong{font-size:.62rem}
   .start-card .instruction-grid span{font-size:.68rem}
 }
+
+html[data-device="phone"] .desktop-hint{display:none}
+html[data-device="phone"] .topbar{grid-template-columns:1fr auto}
+html[data-device="phone"] .brand{align-items:flex-end}
+html[data-device="phone"] .brand span{display:none}
+html[data-device="phone"] .game-shell{aspect-ratio:9/16;max-width:460px;max-height:none}
+html[data-device="phone"] .flap-button{display:block}
+html[data-device="phone"] .hud-centre{top:62px;width:42vw}
+html[data-device="phone"] .app{padding:6px}
+html[data-device="laptop"] .game-shell{aspect-ratio:16/9;max-width:none}
