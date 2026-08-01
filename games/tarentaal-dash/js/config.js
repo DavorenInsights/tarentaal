@@ -1,7 +1,7 @@
 export const GAME_CONFIG = Object.freeze({
-  version: "5.1.0",
-  storageKey: "tarentaalDashV5Best",
-  legacyStorageKeys: Object.freeze(["tarentaalDashV4Best"]),
+  version: "6.0.0",
+  storageKey: "tarentaalDashV6Best",
+  legacyStorageKeys: Object.freeze(["tarentaalDashV5Best", "tarentaalDashV4Best"]),
   canvas: Object.freeze({ width: 1280, height: 720, groundY: 598 }),
   player: Object.freeze({
     x: 158,
@@ -22,34 +22,30 @@ export const GAME_CONFIG = Object.freeze({
     duckHitbox: Object.freeze({ x: 17, y: 15, w: 98, h: 49 })
   }),
   difficulty: Object.freeze({
-    trendSeconds: 210,
-    baseSpeed: 9.8,
-    maxSpeed: 24.5,
-    speedTimeConstant: 112,
-    intensityRefreshMinFrames: 145,
-    intensityRefreshMaxFrames: 330,
-    intensitySmoothing: 0.018,
+    trendSeconds: 220,
+    baseSpeed: 9.6,
+    maxSpeed: 24.2,
+    speedTimeConstant: 118,
+    intensityRefreshMinFrames: 155,
+    intensityRefreshMaxFrames: 345,
+    intensitySmoothing: 0.017,
     validationSpeedBuffer: 2.2,
     spawnLead: 190,
     lookAhead: 1850,
-    minimumFirstGap: 920,
-    calmChance: 0.18,
-    surgeChanceBase: 0.08,
-    surgeChanceTrend: 0.18,
+    minimumFirstGap: 950,
+    calmChance: 0.19,
+    surgeChanceBase: 0.07,
+    surgeChanceTrend: 0.17,
     maximumJumpClusterUse: 0.72,
     maximumDuckHoldFrames: 92,
-    optionalGapMin: 80,
-    optionalGapMax: 470,
-    actionChangeExtra: 65
+    optionalGapMin: 85,
+    optionalGapMax: 480,
+    actionChangeExtra: 68
   }),
-  modes: Object.freeze({ talentsEnabled: false }),
   progression: Object.freeze({
     baseHealth: 3,
-    damageInvulnerabilityFrames: 105,
-    damageScorePenalty: 60,
-    upgradeSafeAheadBase: 650,
-    upgradeSafeAheadFrames: 31,
-    upgradeForceAfterFrames: 660
+    damageInvulnerabilityFrames: 108,
+    damageScorePenalty: 60
   }),
   scoring: Object.freeze({
     distanceRate: 0.048,
@@ -60,13 +56,23 @@ export const GAME_CONFIG = Object.freeze({
     duckUnder: 25,
     shieldFrames: 600
   }),
+  flow: Object.freeze({
+    max: 100,
+    durationFrames: 390,
+    decayPerFrame: 0.045,
+    cooldownFrames: 105,
+    cornGain: 5,
+    potatoGain: 9,
+    nearMissGain: 16,
+    duckGain: 14,
+    shieldGain: 20
+  }),
   rendering: Object.freeze({
-    dayCycleDistance: 28000,
-    regionDistance: 18000,
-    regionTransitionDistance: 2200,
+    dayCycleDistance: 30000,
     warningDistanceBase: 560,
     warningSpeedFrames: 27,
-    cameraShakeDecay: 0.82
+    cameraShakeDecay: 0.82,
+    mobileParticleScale: 0.62
   })
 });
 

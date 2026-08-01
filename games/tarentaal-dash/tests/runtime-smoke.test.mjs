@@ -38,6 +38,7 @@ class ElementStub {
 const gradientStub = { addColorStop() {} };
 const contextStub = new Proxy({
   createLinearGradient() { return gradientStub; },
+  createRadialGradient() { return gradientStub; },
   measureText(text) { return { width: String(text).length * 10 }; }
 }, {
   get(target, property) {
@@ -50,11 +51,11 @@ const contextStub = new Proxy({
 
 const ids = [
   "game", "loadingOverlay", "loadingBar", "loadingText", "startOverlay", "gameOverOverlay",
-  "pauseOverlay", "upgradeOverlay", "upgradeChoices", "upgradeSubtitle", "startButton", "restartButton", "pauseButton", "musicButton", "soundButton",
+  "pauseOverlay", "startButton", "restartButton", "pauseButton", "musicButton", "soundButton",
   "fullscreenButton", "jumpButton", "duckButton", "actionWarning", "score", "best", "speedLabel",
-  "stageLabel", "regionLabel", "comboLabel", "comboPill", "shieldLabel", "healthLabel", "talentCount", "cornCount", "potatoCount", "trendFill",
-  "intensityFill", "difficultyCaption", "finalScore", "finalRank", "finalCombo", "finalSpeed",
-  "finalNear", "finalDuck", "finalSaves", "finalHits", "finalTalents", "finalCorn", "finalPotato"
+  "stageLabel", "regionLabel", "comboLabel", "comboPill", "shieldLabel", "healthLabel", "cornCount", "potatoCount", "trendFill",
+  "intensityFill", "difficultyCaption", "flowFill", "flowLabel", "flowPanel", "finalScore", "finalRank", "finalCombo", "finalSpeed",
+  "finalNear", "finalDuck", "finalSaves", "finalHits", "finalCorn", "finalPotato", "finalDistance", "finalRegions", "finalRushes"
 ];
 const elements = new Map(ids.map(id => [id, new ElementStub(id)]));
 const shell = new ElementStub("shell");
@@ -92,7 +93,8 @@ class AudioStub {
 const windowStub = {
   addEventListener() {},
   AudioContext: null,
-  webkitAudioContext: null
+  webkitAudioContext: null,
+  matchMedia() { return { matches: false }; }
 };
 
 Math.random = createSeededRng(8102026);
@@ -108,10 +110,11 @@ globalThis.performance = { now: () => 1000 };
 await import("../js/game.js");
 await new Promise(resolve => setTimeout(resolve, 10));
 
-assert.equal(window.__TARENTAAL_V5__.ready, true, "Game should finish loading in the smoke harness");
-const game = window.__TARENTAAL_V5__.game;
+assert.equal(window.__TARENTAAL_DASH__.ready, true, "Game should finish loading in the smoke harness");
+const game = window.__TARENTAAL_DASH__.game;
 assert.equal(game.state, "ready");
-assert.ok(game.images.background, "Background should be loaded");
+assert.ok(game.images.regionPretoria, "Pretoria background should be loaded");
+assert.ok(game.images.regionKaroo, "Karoo background should be loaded");
 
 game.startRun();
 assert.equal(game.state, "running");
@@ -132,14 +135,7 @@ game.endGame = () => {
   originalEndGame();
 };
 
-let upgradesChosen = 0;
 for (let frame = 0; frame < 8000 && !["crashed", "gameover"].includes(game.state); frame += 1) {
-  if (game.state === "upgrade") {
-    const choice = game.currentUpgradeChoices[0];
-    assert.ok(choice, "Upgrade screens need at least one choice");
-    game.chooseUpgrade(choice.id);
-    upgradesChosen += 1;
-  }
   const upcoming = game.obstacles
     .filter(obstacle => !obstacle.passed && !obstacle.hitSpent && obstacle.worldX + obstacle.width - game.distance > GAME_CONFIG.player.x - 20)
     .sort((a, b) => a.worldX - b.worldX)[0];
@@ -189,13 +185,8 @@ assert.equal(game.state, "running", "A physics-aware autoplay run should survive
 assert.ok(game.distance > 100000, "The autoplay run should cover a long distance");
 assert.ok(game.score > 1000, "The score should increase over a long run");
 assert.ok(game.scheduler.groupIndex > 35, "Obstacle scheduling should produce many groups");
-if (GAME_CONFIG.modes?.talentsEnabled) {
-  assert.ok(upgradesChosen >= 3, "A long run should present several talent choices");
-  assert.equal(game.chosenUpgrades.length, upgradesChosen, "Chosen talents should be recorded");
-} else {
-  assert.equal(upgradesChosen, 0, "Endless mode should not pause for talents");
-  assert.equal(game.chosenUpgrades.length, 0, "No talents should be recorded in endless mode");
-}
+assert.ok(game.flow, "Endless mode should expose the Krrr-Rush meter");
+assert.ok(game.farthestRegionSerial >= 1, "A long run should reach multiple regional route legs");
 assert.ok(Number.isFinite(game.speed), "Speed should remain finite");
 
 // Damage should consume Veerharte before ending the run.
@@ -217,6 +208,7 @@ console.log(JSON.stringify({
   groups: game.scheduler.groupIndex,
   obstaclesRemaining: game.obstacles.length,
   collectiblesRemaining: game.collectibles.length,
-  upgradesChosen,
+  rushes: game.flow.activations,
+  routeLegs: game.farthestRegionSerial + 1,
   damageTaken: game.damageTaken
 }, null, 2));

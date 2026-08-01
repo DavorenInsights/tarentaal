@@ -1,5 +1,4 @@
 export const IMAGE_ASSETS = Object.freeze({
-  background: "./assets/scenery/farm_background.jpg",
   run1: "./assets/player/run1.png",
   run2: "./assets/player/run2.png",
   run3: "./assets/player/run3.png",
@@ -31,18 +30,10 @@ export const IMAGE_ASSETS = Object.freeze({
   lowBranch: "./assets/obstacles/low_branch.svg",
   suspendedSign: "./assets/obstacles/suspended_sign.svg",
   irrigationPipe: "./assets/obstacles/irrigation_pipe.svg",
-  cornCluster: "./assets/scenery/corn_cluster.png",
-  cornSmall: "./assets/scenery/corn_small.png",
-  cornTall: "./assets/scenery/corn_tall.png",
-  grass1: "./assets/scenery/grass1.png",
-  grass2: "./assets/scenery/grass2.png",
-  grass3: "./assets/scenery/grass3.png",
-  sign1: "./assets/scenery/sign1.png",
-  sign2: "./assets/scenery/sign2.png",
-  regionPretoria: "./assets/scenery/regions/pretoria.png",
-  regionBloemfontein: "./assets/scenery/regions/bloemfontein.png",
-  regionKaroo: "./assets/scenery/regions/karoo.png",
-  regionLowveld: "./assets/scenery/regions/lowveld.png"
+  regionPretoria: "./assets/scenery/regions/pretoria.webp",
+  regionBloemfontein: "./assets/scenery/regions/bloemfontein.webp",
+  regionKaroo: "./assets/scenery/regions/karoo.webp",
+  regionLowveld: "./assets/scenery/regions/lowveld.webp"
 });
 
 export class AssetLoader {

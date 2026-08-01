@@ -1,13 +1,13 @@
 {
   "name": "tarentaal-minigame-centre",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check games/tarentaal-tussle/js/game.js && node --check games/tarentaal-fladder/js/game.js && node --check games/tarentaal-dash/js/regions.js && node --check games/tarentaal-dash/js/game.js",
+    "check": "node --check games/tarentaal-tussle/js/game.js && node --check games/tarentaal-fladder/js/game.js && cd games/tarentaal-dash && npm run check",
     "test:tussle": "node games/tarentaal-tussle/tests/runtime-smoke.mjs",
+    "test:fladder": "node games/tarentaal-fladder/tests/runtime-smoke.mjs",
     "test:dash": "cd games/tarentaal-dash && npm test",
-    "test": "npm run check && npm run test:tussle && npm run test:fladder && npm run test:dash",
-    "test:fladder": "node games/tarentaal-fladder/tests/runtime-smoke.mjs"
+    "test": "npm run check && npm run test:tussle && npm run test:fladder && npm run test:dash"
   }
 }
