@@ -2,87 +2,28 @@
 <html lang="af">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-  <meta name="theme-color" content="#67c8d7">
-  <meta name="description" content="Tarentaal Fladder — flap deur 'n chaotiese Suid-Afrikaanse plaaslandskap.">
-  <title>Tarentaal Fladder</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102f3b">
+  <meta name="robots" content="noindex">
+  <title>Tarentaal Fladder — Tydelik gepauseer</title>
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./css/game.css">
+  <style>
+    :root { color-scheme:dark; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at 20% 10%,#17495b 0,transparent 35%),#091f28; color:#f3fbfa; }
+    main { width:min(620px,100%); padding:36px; border:1px solid rgba(255,255,255,.12); border-radius:24px; background:rgba(255,255,255,.06); box-shadow:0 24px 70px rgba(0,0,0,.3); }
+    .eyebrow { margin:0 0 10px; color:#72e3d5; font-weight:900; letter-spacing:.12em; font-size:.75rem; }
+    h1 { margin:0 0 12px; font-size:clamp(2rem,7vw,3.6rem); line-height:.95; }
+    p { color:#c6d8d8; line-height:1.65; }
+    a { display:inline-flex; margin-top:12px; padding:14px 18px; border-radius:14px; background:#72e3d5; color:#071d25; text-decoration:none; font-weight:900; }
+  </style>
 </head>
 <body>
-  <main class="app" aria-label="Tarentaal Fladder">
-    <header class="topbar">
-      <a class="back-link" href="../../">← Speletjies</a>
-      <div class="brand"><strong>Tarentaal Fladder</strong><span>Onwaarskynlike Plaasvlug • kies phone/laptop op hub</span></div>
-      <div class="desktop-hint">Flap: Spasie / W / ↑ / klik • Pouse: P</div>
-    </header>
-
-    <section class="game-shell">
-      <canvas id="game" width="1280" height="720" aria-label="Tarentaal Fladder speletjie"></canvas>
-      <div class="hud" aria-live="polite">
-        <div class="hud-left">
-          <div class="score-box"><span>TELLING</span><strong id="scoreLabel">0</strong></div>
-          <div class="corn-box"><span>MIELIES</span><strong>🌽 <b id="cornLabel">0</b></strong></div>
-          <div class="best-box"><span>BESTE</span><strong id="bestLabel">0</strong></div>
-        </div>
-        <div class="hud-centre">
-          <div class="stamina-caption"><span>VLERKKRAG</span><strong id="staminaLabel">100%</strong></div>
-          <div class="stamina-track"><div id="staminaFill"></div></div>
-          <div id="shieldPill" class="shield-pill hidden">🪶 VEERKRAG</div>
-        </div>
-        <div class="hud-right">
-          <button id="pauseButton" class="icon-button" type="button" aria-label="Pouse">⏸</button>
-          <button id="soundButton" class="icon-button" type="button" aria-label="Klank aan of af">🔊</button>
-          <button id="fullscreenButton" class="icon-button" type="button" aria-label="Volskerm">⛶</button>
-        </div>
-        <div id="announcement" class="announcement hidden">KRRR-KRRR!</div>
-        <button id="flapButton" class="flap-button" type="button" aria-label="Flap"><strong>🪽</strong><span>FLAP</span></button>
-
-        <div id="startOverlay" class="overlay">
-          <div class="card start-card">
-            <p class="eyebrow">KRRR-KRRR! • SPELETJIE 03</p>
-            <h1>Tarentaal<br><span>Fladder</span></h1>
-            <p class="lead">Help 'n besonder optimistiese tarentaal deur windpompe, hooibale en watertenks vlieg. Hou jou ritme — wilde geflap tap jou vlerkkrag.</p>
-            <div class="instruction-grid">
-              <div><strong>FLAP</strong><span>Spasie, W, ↑, klik of tik</span></div>
-              <div><strong>RITME</strong><span>Laat vlerkkrag tussen flappe herstel</span></div>
-              <div><strong>VERSAMEL</strong><span>Mielies en Veerkrag-skilde</span></div>
-            </div>
-            <div class="challenge-strip"><span>🌽 Bonuspunte</span><span>✨ Naby-mis</span><span>🌅 Dag & nag</span></div>
-            <button id="startButton" class="primary-button" type="button">Begin fladder</button>
-          </div>
-        </div>
-
-        <div id="pauseOverlay" class="overlay hidden">
-          <div class="card compact-card">
-            <p class="eyebrow">HOU JOU VLERKE STIL</p>
-            <h2>Gepouseer</h2>
-            <p>Druk P, Escape of hervat wanneer jy gereed is.</p>
-            <button id="resumeButton" class="primary-button" type="button">Hervat</button>
-          </div>
-        </div>
-
-        <div id="resultOverlay" class="overlay hidden">
-          <div class="card result-card">
-            <p id="resultEyebrow" class="eyebrow">DIE GROND HET GEWEN</p>
-            <h2 id="resultTitle">Krrr... plof.</h2>
-            <div id="medal" class="medal">🪶</div>
-            <div class="result-score"><span>Telling</span><strong id="resultScore">0</strong></div>
-            <div class="result-grid">
-              <div><span>Beste telling</span><strong id="resultBest">0</strong></div>
-              <div><span>Mielies</span><strong id="resultCorn">0</strong></div>
-              <div><span>Naby-misse</span><strong id="resultNear">0</strong></div>
-              <div><span>Afstand</span><strong id="resultDistance">0 m</strong></div>
-            </div>
-            <p id="medalText" class="medal-text">Hou aan fladder.</p>
-            <button id="restartButton" class="primary-button" type="button">Probeer weer</button>
-            <a href="../../" class="secondary-link">Terug na Speletjies</a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <footer>V1.1 • Flappende vlerk-animasie, phone/laptop-optimalisering, vlerkkrag, mielies, naby-misse en plaaslike rekord.</footer>
+  <main>
+    <p class="eyebrow">TARENTAAL SPELETJIES • ONTWIKKELING GEPAUSEER</p>
+    <h1>Tarentaal Fladder</h1>
+    <p>Hierdie speletjie is tydelik nie speelbaar nie. Ons fokus tans net op <strong>Tarentaal Dash</strong> en sal later na hierdie konsep terugkeer.</p>
+    <a href="../tarentaal-dash/">Speel Tarentaal Dash →</a>
   </main>
-  <script type="module" src="./js/game.js"></script>
 </body>
 </html>

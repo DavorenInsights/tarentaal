@@ -1,5 +1,3 @@
-import { getRegionState } from "./regions.js";
-
 const TAU = Math.PI * 2;
 const clamp01 = value => Math.max(0, Math.min(1, value));
 
@@ -248,7 +246,7 @@ function drawBloemLayer(context, distance, width, groundY, quality) {
   }
 }
 
-function drawKarooLayer(context, distance, width, groundY, quality) {
+function drawGraaffReinetLayer(context, distance, width, groundY, quality) {
   drawFence(context, distance, width, groundY - 6, "#493b31", 0.48);
   const pumpX = movingX(0, 1750, distance, 0.12, width, 76);
   drawWindpump(context, pumpX, groundY - 8, 0.82, 0.72);
@@ -275,7 +273,7 @@ function drawKarooLayer(context, distance, width, groundY, quality) {
   context.restore();
 }
 
-function drawLowveldLayer(context, distance, width, groundY, quality) {
+function drawMbombelaLayer(context, distance, width, groundY, quality) {
   const treeCount = quality === "mobile" ? 4 : 6;
   for (let index = -1; index < treeCount; index += 1) {
     const x = movingX(index, 430, distance, 0.25, width, 91);
@@ -303,11 +301,195 @@ function drawLowveldLayer(context, distance, width, groundY, quality) {
   }
 }
 
+
+function drawPalm(context, x, groundY, scale, seed) {
+  context.save();
+  context.translate(x, groundY);
+  context.scale(scale, scale);
+  context.strokeStyle = "#66513a";
+  context.lineWidth = 11;
+  context.lineCap = "round";
+  context.beginPath();
+  context.moveTo(0, 0);
+  context.quadraticCurveTo(8 + seed * 8, -76, 2, -146);
+  context.stroke();
+  context.strokeStyle = seed > 0.5 ? "#3e794f" : "#4c8754";
+  context.lineWidth = 8;
+  for (let index = 0; index < 7; index += 1) {
+    const angle = -Math.PI * 0.92 + index * Math.PI * 0.31;
+    context.beginPath();
+    context.moveTo(2, -144);
+    context.quadraticCurveTo(Math.cos(angle) * 42, -144 + Math.sin(angle) * 18, Math.cos(angle) * 78, -144 + Math.sin(angle) * 48);
+    context.stroke();
+  }
+  context.restore();
+}
+
+function drawFynbos(context, x, groundY, scale, seed) {
+  context.save();
+  context.translate(x, groundY);
+  context.scale(scale, scale);
+  context.strokeStyle = seed > 0.5 ? "#496b52" : "#5d7752";
+  context.lineWidth = 4;
+  for (let index = 0; index < 9; index += 1) {
+    const dx = -30 + index * 8;
+    const height = 25 + hash(seed * 31 + index) * 32;
+    context.beginPath();
+    context.moveTo(0, 0);
+    context.quadraticCurveTo(dx * 0.5, -height * 0.55, dx, -height);
+    context.stroke();
+  }
+  context.fillStyle = seed > 0.55 ? "#d39aaa" : "#d4c37c";
+  context.beginPath();
+  context.arc(-18, -42, 6, 0, TAU);
+  context.fill();
+  context.restore();
+}
+
+function drawCoastalGrass(context, x, groundY, scale, seed) {
+  drawScrub(context, x, groundY, scale, seed > 0.5 ? "#67814e" : "#7b8c56", seed);
+}
+
+function drawSandstone(context, x, groundY, scale, seed) {
+  context.save();
+  context.translate(x, groundY);
+  context.scale(scale, scale);
+  context.fillStyle = seed > 0.5 ? "#a85f42" : "#c27850";
+  context.beginPath();
+  context.moveTo(-48, 0);
+  context.lineTo(-38, -31);
+  context.lineTo(-14, -42 - seed * 22);
+  context.lineTo(14, -38);
+  context.lineTo(38, -60 - seed * 12);
+  context.lineTo(52, 0);
+  context.closePath();
+  context.fill();
+  context.strokeStyle = "rgba(92,54,42,.35)";
+  context.lineWidth = 3;
+  context.beginPath();
+  context.moveTo(-31, -20);
+  context.lineTo(35, -28);
+  context.stroke();
+  context.restore();
+}
+
+function drawVineRow(context, x, groundY, scale, seed) {
+  context.save();
+  context.translate(x, groundY);
+  context.scale(scale, scale);
+  context.strokeStyle = "#66513a";
+  context.lineWidth = 4;
+  context.beginPath();
+  context.moveTo(-38, 0);
+  context.lineTo(-34, -50);
+  context.moveTo(38, 0);
+  context.lineTo(34, -50);
+  context.moveTo(-42, -38);
+  context.lineTo(42, -38);
+  context.stroke();
+  context.fillStyle = seed > 0.5 ? "#4f7b3f" : "#628846";
+  for (let index = -3; index <= 3; index += 1) {
+    context.beginPath();
+    context.ellipse(index * 12, -42 + (index % 2) * 4, 14, 8, index * 0.12, 0, TAU);
+    context.fill();
+  }
+  context.restore();
+}
+
+function drawCapeTownLayer(context, distance, width, groundY, quality) {
+  drawFence(context, distance, width, groundY - 4, "#4b4937", 0.30);
+  const count = quality === "mobile" ? 9 : 16;
+  for (let index = -2; index < count; index += 1) {
+    const x = movingX(index, 145, distance, 0.43, width, 141);
+    const seed = hash(index + 141);
+    drawFynbos(context, x, groundY - 5, 0.58 + seed * 0.34, seed);
+  }
+}
+
+function drawDurbanLayer(context, distance, width, groundY, quality) {
+  const palms = quality === "mobile" ? 3 : 5;
+  for (let index = -1; index < palms; index += 1) {
+    const x = movingX(index, 520, distance, 0.24, width, 173);
+    const seed = hash(index + 173);
+    drawPalm(context, x, groundY - 8, 0.55 + seed * 0.14, seed);
+  }
+  const grass = quality === "mobile" ? 8 : 14;
+  for (let index = -2; index < grass; index += 1) {
+    const x = movingX(index, 135, distance, 0.48, width, 181);
+    const seed = hash(index + 181);
+    drawCoastalGrass(context, x, groundY - 4, 0.45 + seed * 0.32, seed);
+  }
+}
+
+function drawGqeberhaLayer(context, distance, width, groundY, quality) {
+  drawFence(context, distance, width, groundY - 4, "#505646", 0.38);
+  const count = quality === "mobile" ? 8 : 14;
+  for (let index = -2; index < count; index += 1) {
+    const x = movingX(index, 138, distance, 0.49, width, 203);
+    const seed = hash(index + 203);
+    drawCoastalGrass(context, x, groundY - 4, 0.48 + seed * 0.35, seed);
+  }
+  // Wind streaks make the coast feel visibly different without adding collision noise.
+  context.save();
+  context.globalAlpha = 0.13;
+  context.strokeStyle = "#f3fbff";
+  context.lineWidth = 3;
+  for (let index = 0; index < (quality === "mobile" ? 3 : 5); index += 1) {
+    const y = groundY - 170 + index * 34;
+    const shift = (performance.now() * 0.08 + index * 160) % (width + 260) - 130;
+    context.beginPath();
+    context.moveTo(shift, y);
+    context.quadraticCurveTo(shift + 90, y - 12, shift + 190, y + 2);
+    context.stroke();
+  }
+  context.restore();
+}
+
+function drawClarensLayer(context, distance, width, groundY, quality) {
+  const rocks = quality === "mobile" ? 5 : 8;
+  for (let index = -1; index < rocks; index += 1) {
+    const x = movingX(index, 300, distance, 0.34, width, 229);
+    const seed = hash(index + 229);
+    drawSandstone(context, x, groundY - 6, 0.52 + seed * 0.28, seed);
+  }
+  const scrub = quality === "mobile" ? 8 : 13;
+  for (let index = -2; index < scrub; index += 1) {
+    const x = movingX(index, 148, distance, 0.48, width, 241);
+    const seed = hash(index + 241);
+    drawScrub(context, x, groundY - 4, 0.45 + seed * 0.34, seed > 0.5 ? "#657143" : "#78804b", seed);
+  }
+}
+
+function drawUpingtonLayer(context, distance, width, groundY, quality) {
+  drawFence(context, distance, width, groundY - 4, "#5a4931", 0.46);
+  const vines = quality === "mobile" ? 5 : 8;
+  for (let index = -1; index < vines; index += 1) {
+    const x = movingX(index, 285, distance, 0.37, width, 263);
+    const seed = hash(index + 263);
+    drawVineRow(context, x, groundY - 5, 0.72 + seed * 0.18, seed);
+  }
+  const scrub = quality === "mobile" ? 7 : 11;
+  for (let index = -2; index < scrub; index += 1) {
+    const x = movingX(index, 165, distance, 0.5, width, 277);
+    const seed = hash(index + 277);
+    drawScrub(context, x, groundY - 4, 0.42 + seed * 0.28, seed > 0.5 ? "#77713f" : "#8a7741", seed);
+  }
+}
+
+const REGION_LAYER_DRAWERS = Object.freeze({
+  pretoria: drawPretoriaLayer,
+  bloemfontein: drawBloemLayer,
+  "graaff-reinet": drawGraaffReinetLayer,
+  mbombela: drawMbombelaLayer,
+  "cape-town": drawCapeTownLayer,
+  durban: drawDurbanLayer,
+  gqeberha: drawGqeberhaLayer,
+  clarens: drawClarensLayer,
+  upington: drawUpingtonLayer
+});
+
 function drawLayerForRegion(context, region, distance, width, groundY, quality) {
-  if (region.id === "pretoria") drawPretoriaLayer(context, distance, width, groundY, quality);
-  else if (region.id === "bloemfontein") drawBloemLayer(context, distance, width, groundY, quality);
-  else if (region.id === "karoo") drawKarooLayer(context, distance, width, groundY, quality);
-  else drawLowveldLayer(context, distance, width, groundY, quality);
+  (REGION_LAYER_DRAWERS[region.id] ?? drawMbombelaLayer)(context, distance, width, groundY, quality);
 }
 
 export function drawRegionalParallax(context, regionState, distance, width, groundY, quality = "desktop") {
@@ -387,7 +569,7 @@ export function drawRoadsideForeground(context, regionState, distance, width, he
     const x = movingX(index, 120, distance, 0.76, width, 160 + regionState.currentIndex * 13);
     const seed = hash(index + 160 + regionState.currentIndex * 13);
     const y = groundY + 94 + seed * Math.max(10, height - groundY - 105);
-    context.strokeStyle = regionState.display.id === "karoo" ? "#5f5d37" : "#405f36";
+    context.strokeStyle = ["graaff-reinet", "clarens", "upington"].includes(regionState.display.id) ? "#5f5d37" : "#405f36";
     context.lineWidth = 4;
     context.beginPath();
     context.moveTo(x, y + 16);
@@ -401,6 +583,3 @@ export function drawRoadsideForeground(context, regionState, distance, width, he
   context.restore();
 }
 
-export function currentEnvironmentState(distance) {
-  return getRegionState(distance);
-}

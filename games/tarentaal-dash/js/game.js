@@ -6,6 +6,7 @@ import { InputController } from "./input.js";
 import { ObstacleScheduler } from "./obstacles.js";
 import { drawRegionalBackground, getRegionState } from "./regions.js";
 import { drawDirtRoad, drawRegionalParallax, drawRoadsideForeground } from "./environment.js";
+import { drawAmbientLife, drawSignatureLandmark } from "./world-polish.js";
 import { FlowMeter } from "./flow.js";
 
 const $ = selector => document.querySelector(selector);
@@ -238,9 +239,13 @@ class TarentaalDashGame {
     this.nearestObstacle = null;
     this.actionWarning = null;
     this.nextCollectibleWorld = 920;
+    this.lastMilestoneMetres = 0;
+    this.reactionCooldown = 0;
+    this.reaction = null;
     this.obstacles = [];
     this.collectibles = [];
     this.dust = [];
+    this.feathers = [];
     this.popups = [];
     this.director.reset();
     this.scheduler.reset();
@@ -252,7 +257,8 @@ class TarentaalDashGame {
       frame: 0,
       frameTimer: 0,
       airborneLastFrame: false,
-      landingPulse: 0
+      landingPulse: 0,
+      stridePhase: 0
     };
     this.backgroundBirds = [
       { x: 1030, y: 104, speed: 0.82, scale: 0.72, flap: 0.2 },
@@ -271,6 +277,7 @@ class TarentaalDashGame {
     this.ui.pause.classList.add("hidden");
     this.ui.pauseButton.textContent = "⏸ Pouse";
     this.audio.setCrashed(false);
+    this.audio.setRush(false);
     void this.audio.playMusic();
     this.createDust(12, GAME_CONFIG.player.x + 35, GAME_CONFIG.canvas.groundY - 5, 1.3);
   }
@@ -328,13 +335,20 @@ class TarentaalDashGame {
     this.maxSpeed = Math.max(this.maxSpeed, this.speed);
     this.distance += this.speed * dt;
     this.flow.update(dt);
+    this.audio.update(dt);
     this.score += this.speed * GAME_CONFIG.scoring.distanceRate * dt * this.flow.scoreMultiplier;
     this.invulnerableFrames = Math.max(0, this.invulnerableFrames - dt);
     this.damageFlashFrames = Math.max(0, this.damageFlashFrames - dt);
     this.eventAnnouncementCooldown = Math.max(0, this.eventAnnouncementCooldown - dt);
+    this.reactionCooldown = Math.max(0, this.reactionCooldown - dt);
     this.regionState = getRegionState(this.distance);
     this.farthestRegionSerial = Math.max(this.farthestRegionSerial, this.regionState.displaySerial);
-    if (this.flow.justEnded) this.addPopup("Rush verby", GAME_CONFIG.player.x + 115, this.player.y - 30, "#d9f7ef");
+    if (this.flow.justEnded) {
+      this.addPopup("Rush verby", GAME_CONFIG.player.x + 115, this.player.y - 30, "#d9f7ef");
+      this.audio.setRush(false);
+      this.showReaction("Lekker!", "#e6fff5", 34);
+    }
+    this.handleDistanceMilestones();
 
     this.handleDifficultyFeedback(difficulty);
     this.handleRegionFeedback();
@@ -388,6 +402,7 @@ class TarentaalDashGame {
     this.landingLockFrames = Math.max(0, this.landingLockFrames - dt);
     this.player.landingPulse = Math.max(0, this.player.landingPulse - dt * 0.12);
     this.player.ducking = this.duckHeld && this.player.grounded;
+    this.player.stridePhase = (this.player.stridePhase + dt * (0.18 + this.speed * 0.018)) % (Math.PI * 2);
 
     if (this.jumpBuffer > 0 && (this.player.grounded || this.coyoteFrames > 0) && this.landingLockFrames <= 0) {
       this.player.vy = config.jumpVelocity;
@@ -409,7 +424,8 @@ class TarentaalDashGame {
         if (this.player.airborneLastFrame) {
           this.createDust(13, GAME_CONFIG.player.x + 38, GAME_CONFIG.canvas.groundY - 5, 1.55);
           this.player.landingPulse = 1;
-          this.shake = Math.max(this.shake, 2.4);
+          this.shake = Math.max(this.shake, 3.2);
+          this.createFeathers(2, GAME_CONFIG.player.x + 55, GAME_CONFIG.canvas.groundY - 48, 0.55);
         }
         this.player.y = groundStandingY;
         this.player.vy = 0;
@@ -431,6 +447,9 @@ class TarentaalDashGame {
       }
       if (Math.random() < 0.10 * dt) {
         this.createDust(1, GAME_CONFIG.player.x + 18, GAME_CONFIG.canvas.groundY - 6, 0.9);
+      }
+      if ((this.flow.active || this.speed > GAME_CONFIG.difficulty.maxSpeed * 0.72) && Math.random() < 0.018 * dt) {
+        this.createFeathers(1, GAME_CONFIG.player.x + 25, this.player.y + 76, 0.48);
       }
     }
   }
@@ -496,6 +515,8 @@ class TarentaalDashGame {
       this.score += bonus;
       this.addFlow(GAME_CONFIG.flow.nearMissGain);
       this.addPopup(`Naby! +${bonus}`, GAME_CONFIG.player.x + 100, this.player.y - 10, "#fff1a8");
+      this.createFeathers(3, GAME_CONFIG.player.x + 72, this.player.y + 54, 0.9);
+      this.showReaction("Eish!", "#fff7c9", 30);
       this.audio.playNearMiss();
     }
 
@@ -505,6 +526,7 @@ class TarentaalDashGame {
       this.score += bonus;
       this.addFlow(GAME_CONFIG.flow.duckGain);
       this.addPopup(`Onderdeur! +${bonus}`, GAME_CONFIG.player.x + 105, GAME_CONFIG.canvas.groundY - 115, "#bfeeff");
+      this.showReaction("Laag!", "#d9fbff", 26);
       this.audio.playDuckBonus();
     }
   }
@@ -662,6 +684,8 @@ class TarentaalDashGame {
     this.addPopup(`Veerkrag! +${shieldBonus}`, GAME_CONFIG.player.x + 95, this.player.y - 15, "#bdefff");
     this.audio.playShield();
     this.createDust(18, GAME_CONFIG.player.x + 50, GAME_CONFIG.canvas.groundY - 12, 1.5);
+    this.createFeathers(5, GAME_CONFIG.player.x + 58, this.player.y + 54, 1.25);
+    this.showReaction("KRRR!", "#dff8ff", 34);
   }
 
   takeDamage(obstacle) {
@@ -674,12 +698,15 @@ class TarentaalDashGame {
     this.score = Math.max(0, this.score - penalty);
     this.breakCombo(GAME_CONFIG.player.x + 95, this.player.y - 15);
     this.flow.break();
+    this.audio.setRush(false);
     for (const groupObstacle of this.obstacles) {
       if (groupObstacle.groupIndex === obstacle.groupIndex) groupObstacle.hitSpent = true;
     }
     this.addPopup(`Eina! -❤️ -${penalty}`, GAME_CONFIG.player.x + 105, this.player.y - 18, "#ffd0cb");
     this.audio.playDamage();
     this.createDust(20, GAME_CONFIG.player.x + 50, GAME_CONFIG.canvas.groundY - 10, 1.65);
+    this.createFeathers(8, GAME_CONFIG.player.x + 60, this.player.y + 55, 1.55);
+    this.showReaction("EINA!", "#ffe0d9", 38);
     if (this.health <= 0) this.endGame();
   }
 
@@ -688,8 +715,12 @@ class TarentaalDashGame {
     if (!activated) return;
     this.addPopup("KRRR-RUSH! x2", GAME_CONFIG.player.x + 145, this.player.y - 50, "#fff29b");
     this.audio.playStage(4);
+    this.audio.playKrrr();
+    this.audio.setRush(true);
+    this.showReaction("LOS HOM!", "#fff3a0", 48, true);
     this.shake = Math.max(this.shake, 5);
     this.createDust(24, GAME_CONFIG.player.x + 42, GAME_CONFIG.canvas.groundY - 8, 1.7);
+    this.createFeathers(7, GAME_CONFIG.player.x + 62, this.player.y + 48, 1.35);
   }
 
   updateWarning() {
@@ -732,6 +763,7 @@ class TarentaalDashGame {
     if (regionState.displaySerial === this.lastRegionSerial) return;
     this.lastRegionSerial = regionState.displaySerial;
     this.addPopup(`📍 ${regionState.display.name}`, GAME_CONFIG.canvas.width - 220, 195, regionState.display.accent);
+    this.showReaction(regionState.display.reaction ?? "Krrr-krrr!", regionState.display.accent, 42);
     this.audio.playStage((regionState.displaySerial % 4) + 1);
   }
 
@@ -817,6 +849,23 @@ class TarentaalDashGame {
     return "Legendariese Tarentaal";
   }
 
+
+  handleDistanceMilestones() {
+    const metres = Math.floor(this.distance / 100);
+    const milestone = Math.floor(metres / 1000) * 1000;
+    if (milestone <= 0 || milestone <= this.lastMilestoneMetres) return;
+    this.lastMilestoneMetres = milestone;
+    this.showReaction("KRRR-KRRR!", "#fff1a8", 44, true);
+    this.audio.playKrrr();
+    this.addPopup(`${milestone.toLocaleString()} m!`, GAME_CONFIG.player.x + 118, this.player.y - 34, "#fff1a8");
+  }
+
+  showReaction(text, color = "#fff", life = 36, force = false) {
+    if (!force && this.reactionCooldown > 0) return;
+    this.reaction = { text, color, life, maxLife: life };
+    this.reactionCooldown = Math.max(18, life * 0.55);
+  }
+
   getPlayerHitbox() {
     const config = GAME_CONFIG.player;
     if (this.player.grounded && this.player.ducking) {
@@ -871,6 +920,22 @@ class TarentaalDashGame {
     }
   }
 
+  createFeathers(count, x, y, intensity = 1) {
+    const scaledCount = Math.max(1, Math.round(count * (this.quality === "mobile" ? 0.65 : 1)));
+    for (let index = 0; index < scaledCount; index += 1) {
+      this.feathers.push({
+        x: x + Math.random() * 34 - 15,
+        y: y + Math.random() * 26 - 13,
+        vx: (-1.1 - Math.random() * 2.3) * intensity,
+        vy: (-1.3 - Math.random() * 2.5) * intensity,
+        rotation: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * 0.24,
+        scale: 0.55 + Math.random() * 0.75,
+        life: 34 + Math.random() * 34
+      });
+    }
+  }
+
   addPopup(text, x, y, color) {
     this.popups.push({ text, x, y, color, vy: -1.15, life: 44 });
   }
@@ -883,6 +948,20 @@ class TarentaalDashGame {
       particle.life -= dt;
     }
     this.dust = this.dust.filter(particle => particle.life > 0);
+
+    for (const feather of this.feathers) {
+      feather.x += feather.vx * dt;
+      feather.y += feather.vy * dt;
+      feather.vy += 0.045 * dt;
+      feather.rotation += feather.spin * dt;
+      feather.life -= dt;
+    }
+    this.feathers = this.feathers.filter(feather => feather.life > 0);
+
+    if (this.reaction) {
+      this.reaction.life -= dt;
+      if (this.reaction.life <= 0) this.reaction = null;
+    }
 
     for (const popup of this.popups) {
       popup.y += popup.vy * dt;
@@ -922,19 +1001,29 @@ class TarentaalDashGame {
 
     context.save();
     context.translate(shakeX, shakeY);
+    if (this.flow.active && this.state === "running") {
+      const zoom = 1.006 + Math.sin(performance.now() * 0.006) * 0.0025;
+      context.translate(width * 0.5, height * 0.5);
+      context.scale(zoom, zoom);
+      context.translate(-width * 0.5, -height * 0.5);
+    }
     context.clearRect(-20, -20, width + 40, height + 40);
     this.regionState = drawRegionalBackground(context, this.images, this.distance, width, height);
     this.drawSky(env);
     this.drawBackgroundBirds(env);
     drawRegionalParallax(context, this.regionState, this.distance, width, GAME_CONFIG.canvas.groundY, this.quality);
+    drawSignatureLandmark(context, this.regionState, width, GAME_CONFIG.canvas.groundY, this.quality);
+    drawAmbientLife(context, this.regionState, this.distance, width, GAME_CONFIG.canvas.groundY, this.quality);
     drawDirtRoad(context, this.regionState, this.distance, width, height, GAME_CONFIG.canvas.groundY, this.quality);
     drawRoadsideForeground(context, this.regionState, this.distance, width, height, GAME_CONFIG.canvas.groundY, this.quality);
     this.drawCollectibles();
     this.drawObstacles();
     this.drawDust();
+    this.drawFeathers();
     this.drawPlayerShadow();
     if (this.shieldActive) this.drawShield();
     this.drawPlayer();
+    this.drawReaction();
     this.drawPopups();
     if ((this.director.currentIntensity > 0.78 || this.flow.active) && this.state === "running") this.drawSpeedLines();
     this.drawNightTint(env);
@@ -986,19 +1075,50 @@ class TarentaalDashGame {
 
   drawBackgroundBirds(env) {
     const context = this.ctx;
+    const coastal = ["durban", "gqeberha", "cape-town"].includes(this.regionState?.display?.id);
     context.save();
-    context.globalAlpha = 0.42 * (1 - env.darkness * 0.55);
-    context.strokeStyle = "#293b43";
-    context.lineCap = "round";
+    context.globalAlpha = 0.50 * (1 - env.darkness * 0.48);
     for (const bird of this.backgroundBirds) {
-      if (bird.x < 80 || bird.x > GAME_CONFIG.canvas.width - 80) continue;
-      const flap = Math.sin(bird.flap) * 7 * bird.scale;
-      context.lineWidth = 5 * bird.scale;
+      if (bird.x < 55 || bird.x > GAME_CONFIG.canvas.width + 55) continue;
+      const flap = Math.sin(bird.flap);
+      const s = bird.scale;
+      context.save();
+      context.translate(bird.x, bird.y);
+      context.scale(s, s);
+      context.rotate(-0.035 + flap * 0.025);
+
+      context.fillStyle = coastal ? "#eef5f2" : "#33444a";
+      context.strokeStyle = coastal ? "#7a8e91" : "#243238";
+      context.lineWidth = 2.8;
       context.beginPath();
-      context.moveTo(bird.x - 28 * bird.scale, bird.y + flap);
-      context.quadraticCurveTo(bird.x - 12 * bird.scale, bird.y - 12 * bird.scale, bird.x, bird.y);
-      context.quadraticCurveTo(bird.x + 12 * bird.scale, bird.y - 12 * bird.scale, bird.x + 28 * bird.scale, bird.y + flap);
+      context.ellipse(0, 1, 15, 8, 0, 0, Math.PI * 2);
+      context.fill();
       context.stroke();
+
+      context.fillStyle = coastal ? "#f5f8f2" : "#455a61";
+      context.beginPath();
+      context.moveTo(-3, 0);
+      context.quadraticCurveTo(-24, -14 - flap * 11, -34, -3 - flap * 4);
+      context.quadraticCurveTo(-18, 1, -2, 4);
+      context.closePath();
+      context.fill();
+      context.stroke();
+      context.beginPath();
+      context.moveTo(3, 0);
+      context.quadraticCurveTo(23, -13 + flap * 11, 35, -2 + flap * 4);
+      context.quadraticCurveTo(18, 2, 3, 4);
+      context.closePath();
+      context.fill();
+      context.stroke();
+
+      context.fillStyle = coastal ? "#e6eee9" : "#2b3a40";
+      context.beginPath();
+      context.arc(13, -3, 6, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = coastal ? "#d8a83d" : "#d36a35";
+      context.beginPath();
+      context.moveTo(18, -3); context.lineTo(29, 0); context.lineTo(18, 2); context.closePath(); context.fill();
+      context.restore();
     }
     context.restore();
   }
@@ -1092,10 +1212,13 @@ class TarentaalDashGame {
   drawPlayer() {
     const context = this.ctx;
     const config = GAME_CONFIG.player;
+    const phase = this.player.stridePhase ?? 0;
     context.save();
     if (this.invulnerableFrames > 0 && Math.floor(this.invulnerableFrames / 5) % 2 === 0) context.globalAlpha = 0.40;
     if (this.state === "crashed" || this.state === "gameover") {
       context.globalAlpha = 1;
+      context.shadowColor = "rgba(20,30,34,.28)";
+      context.shadowBlur = 10;
       context.drawImage(this.images.crash, config.x - 16, GAME_CONFIG.canvas.groundY - 86, 184, 85);
       context.restore();
       return;
@@ -1105,11 +1228,31 @@ class TarentaalDashGame {
       const centerX = config.x + 60;
       const centerY = this.player.y + 70;
       const angle = clamp(this.player.vy / 78, -0.18, 0.20);
-      const stretch = 1 + Math.min(0.055, Math.abs(this.player.vy) * 0.0022);
+      const stretch = 1 + Math.min(0.065, Math.abs(this.player.vy) * 0.0024);
       context.translate(centerX, centerY);
       context.rotate(angle);
       context.scale(1 / stretch, stretch);
+      if (this.flow.active) {
+        for (let ghost = 3; ghost >= 1; ghost -= 1) {
+          context.save();
+          context.globalAlpha *= 0.08 * ghost;
+          context.drawImage(this.images.jump, -63 - ghost * 11, -74, 126, 148);
+          context.restore();
+        }
+      }
+      context.shadowColor = "rgba(255,246,170,.20)";
+      context.shadowBlur = this.flow.active ? 16 : 6;
       context.drawImage(this.images.jump, -63, -74, 126, 148);
+      // Extra wing sweep makes the airborne pose feel animated instead of frozen.
+      context.globalAlpha *= 0.42;
+      context.strokeStyle = "#76818a";
+      context.lineWidth = 4;
+      context.lineCap = "round";
+      const wingLift = Math.sin(performance.now() * 0.011) * 7;
+      context.beginPath();
+      context.moveTo(-20, 16);
+      context.quadraticCurveTo(-50, -5 + wingLift, -67, 20);
+      context.stroke();
       context.restore();
       return;
     }
@@ -1118,18 +1261,44 @@ class TarentaalDashGame {
       const image = this.images[`duck${this.player.frame % 2 + 1}`];
       const pulse = this.player.landingPulse;
       context.translate(config.x + 65, GAME_CONFIG.canvas.groundY - 39);
+      context.rotate(-0.025 + Math.sin(phase) * 0.012);
       context.scale(1 + pulse * 0.08, 1 - pulse * 0.08);
+      if (this.flow.active) {
+        context.save(); context.globalAlpha *= 0.15; context.drawImage(image, -92, -43, 150, 78); context.restore();
+      }
+      context.shadowColor = "rgba(20,30,34,.18)";
+      context.shadowBlur = 8;
       context.drawImage(image, -75, -43, 150, 78);
       context.restore();
       return;
     }
 
     const image = this.images[`run${this.player.frame % 5 + 1}`];
-    const bob = Math.sin(this.player.frame * 1.7) * 1.5;
+    const bob = Math.sin(phase * 2) * 2.2;
     const pulse = this.player.landingPulse;
+    const speedLean = clamp((this.speed - GAME_CONFIG.difficulty.baseSpeed) / 85, 0, 0.10);
+    const strideSquash = Math.sin(phase * 2) * 0.018;
     context.translate(config.x + 56, this.player.y + 69 + bob);
-    context.scale(1 + pulse * 0.08, 1 - pulse * 0.08);
+    context.rotate(-speedLean + Math.sin(phase) * 0.012);
+    context.scale(1 + pulse * 0.08 + strideSquash, 1 - pulse * 0.08 - strideSquash * 0.65);
+    if (this.flow.active) {
+      for (let ghost = 3; ghost >= 1; ghost -= 1) {
+        context.save();
+        context.globalAlpha *= 0.055 * ghost;
+        context.drawImage(image, -56 - ghost * 12, -71, 112, 142);
+        context.restore();
+      }
+    }
+    context.shadowColor = this.flow.active ? "rgba(255,235,113,.52)" : "rgba(18,28,33,.18)";
+    context.shadowBlur = this.flow.active ? 14 : 7;
     context.drawImage(image, -56, -71, 112, 142);
+    // Small moving rim highlight adds polish while preserving the original sprite art.
+    context.globalAlpha *= 0.30;
+    context.strokeStyle = this.flow.active ? "#fff2a0" : "#d5edf2";
+    context.lineWidth = 2.4;
+    context.beginPath();
+    context.arc(10, -34, 23, -1.45, -0.42);
+    context.stroke();
     context.restore();
   }
 
@@ -1164,6 +1333,57 @@ class TarentaalDashGame {
       context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
       context.fill();
     }
+    context.restore();
+  }
+
+  drawFeathers() {
+    const context = this.ctx;
+    context.save();
+    for (const feather of this.feathers) {
+      context.save();
+      context.translate(feather.x, feather.y);
+      context.rotate(feather.rotation);
+      context.scale(feather.scale, feather.scale);
+      context.globalAlpha = clamp(feather.life / 24, 0, 0.78);
+      context.fillStyle = "#dfe8e6";
+      context.strokeStyle = "#5b6870";
+      context.lineWidth = 1.4;
+      context.beginPath();
+      context.ellipse(0, 0, 3.5, 9, 0.25, 0, Math.PI * 2);
+      context.fill();
+      context.stroke();
+      context.beginPath(); context.moveTo(-1,7); context.lineTo(2,-8); context.stroke();
+      context.restore();
+    }
+    context.restore();
+  }
+
+  drawReaction() {
+    if (!this.reaction) return;
+    const context = this.ctx;
+    const fade = clamp(this.reaction.life / Math.min(14, this.reaction.maxLife), 0, 1);
+    const centerX = GAME_CONFIG.player.x + 126;
+    const baseY = this.player.grounded && this.player.ducking ? GAME_CONFIG.canvas.groundY - 108 : this.player.y - 14;
+    const bounce = Math.sin((this.reaction.maxLife - this.reaction.life) * 0.17) * 2;
+    context.save();
+    context.globalAlpha = fade;
+    context.font = "900 19px system-ui";
+    const textWidth = Math.max(68, context.measureText(this.reaction.text).width + 30);
+    const x = centerX - textWidth / 2;
+    const y = baseY - 38 + bounce;
+    context.fillStyle = "rgba(15,38,48,.88)";
+    context.strokeStyle = "rgba(255,255,255,.92)";
+    context.lineWidth = 3;
+    context.beginPath();
+    const r = 14;
+    context.moveTo(x+r,y); context.arcTo(x+textWidth,y,x+textWidth,y+38,r);
+    context.arcTo(x+textWidth,y+38,x,y+38,r);
+    context.lineTo(centerX-18,y+38); context.lineTo(centerX-30,y+51); context.lineTo(centerX+2,y+38);
+    context.arcTo(x,y+38,x,y,r); context.arcTo(x,y,x+textWidth,y,r); context.closePath();
+    context.fill(); context.stroke();
+    context.fillStyle = this.reaction.color;
+    context.textAlign = "center"; context.textBaseline = "middle";
+    context.fillText(this.reaction.text, centerX, y + 19);
     context.restore();
   }
 

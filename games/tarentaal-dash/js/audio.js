@@ -1,12 +1,20 @@
+const clamp01 = value => Math.max(0, Math.min(1, value));
+
 export class AudioManager {
   constructor() {
     this.musicEnabled = true;
     this.sfxEnabled = true;
     this.context = null;
-    this.music = new Audio("./assets/audio/dusty_farm_sprint.mp3");
-    this.music.loop = true;
-    this.music.preload = "auto";
-    this.music.volume = 0.24;
+    this.mainMusic = new Audio("./assets/audio/dusty_farm_sprint.mp3");
+    this.rushMusic = new Audio("./assets/audio/krrr_rush.mp3");
+    this.mainMusic.loop = true;
+    this.rushMusic.loop = true;
+    this.mainMusic.preload = "auto";
+    this.rushMusic.preload = "auto";
+    this.mainMusic.volume = 0.24;
+    this.rushMusic.volume = 0;
+    this.rushActive = false;
+    this.crashed = false;
   }
 
   ensureContext() {
@@ -43,11 +51,15 @@ export class AudioManager {
   playJump() { this.tone(420, 0.12, "triangle", 0.034, 680); }
   playCrash() { this.tone(185, 0.20, "sawtooth", 0.050, 65); }
   playDamage() { this.tone(240, 0.13, "sawtooth", 0.040, 110); this.tone(115, 0.16, "triangle", 0.028, 75, 0.05); }
-  playUpgrade() { this.tone(460, 0.12, "triangle", 0.030, 720); this.tone(720, 0.16, "triangle", 0.026, 1080, 0.08); }
   playNearMiss() { this.tone(840, 0.10, "triangle", 0.022, 1080); }
   playDuckBonus() { this.tone(510, 0.10, "triangle", 0.025, 760); }
   playShield() { this.tone(760, 0.18, "triangle", 0.044, 390); }
   playStage(stageIndex) { this.tone(500 + stageIndex * 65, 0.20, "triangle", 0.032, 760 + stageIndex * 50); }
+  playKrrr() {
+    this.tone(265, 0.055, "square", 0.018, 225);
+    this.tone(310, 0.055, "square", 0.017, 260, 0.065);
+    this.tone(355, 0.075, "triangle", 0.020, 520, 0.13);
+  }
 
   playCollect(type) {
     if (type === "corn") {
@@ -64,13 +76,45 @@ export class AudioManager {
 
   async playMusic() {
     if (!this.musicEnabled) return;
-    try { await this.music.play(); } catch { /* Autoplay waits for the next user gesture. */ }
+    try { await this.mainMusic.play(); } catch { /* Autoplay waits for the next user gesture. */ }
+    if (this.rushActive) {
+      try { await this.rushMusic.play(); } catch { /* Same gesture policy as the main theme. */ }
+    }
   }
 
-  pauseMusic() { this.music.pause(); }
+  pauseMusic() {
+    this.mainMusic.pause();
+    this.rushMusic.pause();
+  }
+
+  setRush(active) {
+    const next = Boolean(active);
+    if (next === this.rushActive) return;
+    this.rushActive = next;
+    if (next) {
+      try { this.rushMusic.currentTime = 0; } catch { /* Some test/audio stubs omit currentTime. */ }
+      if (this.musicEnabled) {
+        const attempt = this.rushMusic.play();
+        attempt?.catch?.(() => {});
+      }
+    }
+  }
+
+  update(dt = 1) {
+    const response = clamp01(0.09 * dt);
+    const mainTarget = this.crashed ? 0.10 : this.rushActive ? 0.075 : 0.24;
+    const rushTarget = this.crashed ? 0.04 : this.rushActive ? 0.30 : 0;
+    this.mainMusic.volume += (mainTarget - this.mainMusic.volume) * response;
+    this.rushMusic.volume += (rushTarget - this.rushMusic.volume) * response;
+    if (!this.rushActive && this.rushMusic.volume < 0.006) {
+      this.rushMusic.volume = 0;
+      this.rushMusic.pause();
+    }
+  }
 
   setCrashed(crashed) {
-    this.music.volume = crashed ? 0.10 : 0.24;
+    this.crashed = Boolean(crashed);
+    if (this.crashed) this.setRush(false);
   }
 
   toggleMusic() {

@@ -114,7 +114,7 @@ assert.equal(window.__TARENTAAL_DASH__.ready, true, "Game should finish loading 
 const game = window.__TARENTAAL_DASH__.game;
 assert.equal(game.state, "ready");
 assert.ok(game.images.regionPretoria, "Pretoria background should be loaded");
-assert.ok(game.images.regionKaroo, "Karoo background should be loaded");
+assert.ok(game.images.regionCapeTown, "Cape Town background should be loaded");
 
 game.startRun();
 assert.equal(game.state, "running");

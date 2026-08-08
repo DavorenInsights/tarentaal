@@ -1,7 +1,8 @@
 const clamp01 = value => Math.max(0, Math.min(1, value));
 
-export const ROUTE_DISTANCE = 18000;
-export const ROUTE_TRANSITION_DISTANCE = 2400;
+// Game distance is stored at 100 internal units per displayed metre.
+export const ROUTE_DISTANCE = 40000; // 400 m per town/region.
+export const ROUTE_TRANSITION_DISTANCE = 4500; // Final 45 m cross-fades into the next map.
 
 export const REGIONS = Object.freeze([
   Object.freeze({
@@ -9,6 +10,7 @@ export const REGIONS = Object.freeze([
     name: "Pretoria",
     short: "Pretoria",
     subtitle: "Jakarandas & koppies",
+    reaction: "Jakaranda-pad!",
     accent: "#a77ad4",
     imageKey: "regionPretoria",
     roadTop: "#bc7543",
@@ -21,6 +23,7 @@ export const REGIONS = Object.freeze([
     name: "Bloemfontein",
     short: "Bloem",
     subtitle: "Vrystaat-vlaktes",
+    reaction: "Vrystaat, hier kom ons!",
     accent: "#efaa61",
     imageKey: "regionBloemfontein",
     roadTop: "#c57a3f",
@@ -29,28 +32,95 @@ export const REGIONS = Object.freeze([
     verge: "#b89443"
   }),
   Object.freeze({
-    id: "karoo",
-    name: "Die Karoo",
-    short: "Karoo",
-    subtitle: "Koppies & windpompe",
+    id: "graaff-reinet",
+    name: "Graaff-Reinet",
+    short: "Graaff-Reinet",
+    subtitle: "Karoo-koppies & windpompe",
+    reaction: "Karoo! Krrr-krrr!",
     accent: "#df7f4d",
-    imageKey: "regionKaroo",
+    imageKey: "regionGraaffReinet",
     roadTop: "#bb693a",
     roadBottom: "#6f3825",
     roadDust: "#d68c54",
     verge: "#8f8244"
   }),
   Object.freeze({
-    id: "lowveld",
-    name: "Laeveld",
-    short: "Laeveld",
-    subtitle: "Aloë, berge & bosveld",
+    id: "mbombela",
+    name: "Mbombela",
+    short: "Mbombela",
+    subtitle: "Laeveld, aloë & bosveld",
+    reaction: "Bosveld-bene!",
     accent: "#68b873",
-    imageKey: "regionLowveld",
+    imageKey: "regionMbombela",
     roadTop: "#b66e3c",
     roadBottom: "#693923",
     roadDust: "#d18d55",
     verge: "#678f45"
+  }),
+  Object.freeze({
+    id: "cape-town",
+    name: "Kaapstad",
+    short: "Kaapstad",
+    subtitle: "Tafelberg & fynbos",
+    reaction: "Berg in sig!",
+    accent: "#5fa8c9",
+    imageKey: "regionCapeTown",
+    roadTop: "#b7784d",
+    roadBottom: "#67412d",
+    roadDust: "#d29b6c",
+    verge: "#63815d"
+  }),
+  Object.freeze({
+    id: "durban",
+    name: "Durban",
+    short: "Durban",
+    subtitle: "Palms & Indiese Oseaan",
+    reaction: "See toe!",
+    accent: "#48b9aa",
+    imageKey: "regionDurban",
+    roadTop: "#c48754",
+    roadBottom: "#735039",
+    roadDust: "#dda978",
+    verge: "#60915a"
+  }),
+  Object.freeze({
+    id: "gqeberha",
+    name: "Gqeberha",
+    short: "Gqeberha",
+    subtitle: "Wind, kus & vuurtorings",
+    reaction: "Hou vas — wind!",
+    accent: "#6ca7bf",
+    imageKey: "regionGqeberha",
+    roadTop: "#b97a51",
+    roadBottom: "#6b4633",
+    roadDust: "#d39e73",
+    verge: "#708663"
+  }),
+  Object.freeze({
+    id: "clarens",
+    name: "Clarens",
+    short: "Clarens",
+    subtitle: "Sandsteen & Maluti-berge",
+    reaction: "Berge!",
+    accent: "#d98b57",
+    imageKey: "regionClarens",
+    roadTop: "#ad6844",
+    roadBottom: "#633d2d",
+    roadDust: "#cf8e60",
+    verge: "#71814d"
+  }),
+  Object.freeze({
+    id: "upington",
+    name: "Upington",
+    short: "Upington",
+    subtitle: "Oranjerivier & wingerde",
+    reaction: "Oranje toe!",
+    accent: "#e1a54d",
+    imageKey: "regionUpington",
+    roadTop: "#c87c42",
+    roadBottom: "#704126",
+    roadDust: "#e0a15d",
+    verge: "#8a8f4d"
   })
 ]);
 
@@ -86,7 +156,6 @@ function drawCoverImage(context, image, distance, width, height, alpha = 1, phas
   const ih = image.naturalHeight || image.height;
   if (!iw || !ih) return false;
 
-  // Slight overscan creates room for a gentle cinematic pan without showing edges.
   const overscan = 1.08;
   const scale = Math.max(width / iw, height / ih) * overscan;
   const drawW = iw * scale;
@@ -95,12 +164,10 @@ function drawCoverImage(context, image, distance, width, height, alpha = 1, phas
   const spareY = Math.max(0, drawH - height);
   const panX = Math.sin(distance * 0.00042 + phaseOffset) * spareX * 0.42;
   const panY = Math.sin(distance * 0.00019 + phaseOffset * 1.7) * spareY * 0.20;
-  const x = (width - drawW) / 2 + panX;
-  const y = (height - drawH) / 2 + panY;
 
   context.save();
   context.globalAlpha = alpha;
-  context.drawImage(image, x, y, drawW, drawH);
+  context.drawImage(image, (width - drawW) / 2 + panX, (height - drawH) / 2 + panY, drawW, drawH);
   context.restore();
   return true;
 }

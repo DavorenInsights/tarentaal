@@ -1,28 +1,26 @@
 # Changelog
 
-## Tarentaal Dash V6.0.0
+## V6.5.0 — Living Road Edition
 
-- Added region-specific moving parallax layers
-- Added a continuous dirt-road renderer for every route
-- Added dynamic player and obstacle shadows
-- Removed baked jump shadow artefacts
-- Added Krrr-Rush flow and x2 score state
-- Added Rush attraction for nearby collectibles
-- Added landing squash, jump tilt and stronger impact feedback
-- Added distance, route-leg and Rush statistics to game over
-- Removed inactive roguelite upgrade architecture
-- Compressed high-quality backgrounds to WebP
-- Added device-aware particle scaling and tab-hidden pause
-- Cleaned duplicated root-level files
-- Added environment and flow tests
+- Preserved the V6.4 nine-town route at 400 m per location.
+- Upgraded player presentation with continuous stride animation, speed lean, jump wing motion, stronger landing squash/stretch, Krrr-Rush ghosts and rim lighting.
+- Added feather particles to near misses, shield saves, impacts, landings and high-speed running.
+- Replaced simple background-bird line silhouettes with animated full bird shapes, including coastal colour variation.
+- Added a late-leg signature landmark reveal for all nine locations.
+- Added ambient traffic and region moments such as coastal wind, Lowveld lightning and Upington dust devils.
+- Added short comic-style reactions tied to gameplay events and town entries.
+- Added kilometre milestone reactions.
+- Added an original second soundtrack, `krrr_rush.mp3`, with automatic cross-fade during Krrr-Rush.
+- Added a subtle Krrr-Rush camera push.
+- Removed temporary/unused polish state and an unused legacy audio method during the cleanup pass.
+- Core physics, obstacle hitboxes and difficulty scheduling remain unchanged.
 
-## Tarentaal Dash V6.3 Comic Rush Edition
+## V6.4.0 — Nine Town Run
 
-- Rebuilt the gameplay HUD as a clean top-of-screen three-zone layout
-- Added live distance and locally stored best-distance display
-- Added a true portrait phone frame and responsive laptop frame
-- Auto device mode now resolves and updates on resize/orientation changes
-- Replaced every duck obstacle with a comic-style flying bird
-- Added hadeda pair, crow, eagle and vulture variants
-- Preserved the first-ten-obstacle tutorial arrow limit
-- Kept the V6 regional parallax, dirt road, dynamic shadows and Krrr-Rush loop
+- Extended every route leg from about 180 m to about 400 m.
+- Expanded the endless route from 4 to 9 South African locations: Pretoria, Bloemfontein, Graaff-Reinet, Mbombela, Cape Town, Durban, Gqeberha, Clarens and Upington.
+- Added five new lightweight regional background assets and new region-specific foreground/parallax treatments.
+- Replaced the region rendering if/else chain with a region renderer map.
+- Removed unused upgrade code, obsolete scenery/obstacle files, PNG duplicates and legacy root-level Dash copies.
+- Removed inactive Tussle/Fladder runtime code while retaining their non-playable placeholder pages.
+- Updated tests to validate all nine region assets and the 400 m route length.

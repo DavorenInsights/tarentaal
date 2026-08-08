@@ -366,7 +366,7 @@ html[data-device="laptop"] .mobile-controls { display: none; }
   .flow-fill, .action-warning { transition: none; }
 }
 
-/* V6.3 Comic Rush top-HUD and true device frames */
+/* V6.5 Living Road Edition top-HUD and true device frames */
 .sr-only {
   position: absolute !important;
   width: 1px !important;

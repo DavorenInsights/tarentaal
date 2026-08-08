@@ -1,33 +1,36 @@
-# Tarentaal Dash V6
+# Tarentaal Dash V6.5 — Living Road Edition
 
-A polished Afrikaans endless runner built with Canvas, JavaScript and static assets.
+The active Tarentaal endless runner.
 
-## Architecture
+## Route system
 
-- `config.js` — gameplay constants and balancing
-- `difficulty.js` — smooth difficulty and event director
-- `obstacles.js` — validated obstacle scheduling and spacing
-- `regions.js` — regional route state and background renderer
-- `environment.js` — moving parallax layers and dirt-road rendering
-- `flow.js` — Krrr-Rush reward loop
-- `input.js` — keyboard, pointer and mobile controls
-- `audio.js` — music and sound effects
-- `game.js` — game state, collision, scoring and render orchestration
+The world cycles through nine South African locations. Every leg is `40,000` internal distance units, which equals about `400 m` on the in-game HUD. The final `4,500` units cross-fade toward the next environment.
 
-## Controls
+1. Pretoria
+2. Bloemfontein
+3. Graaff-Reinet
+4. Mbombela
+5. Cape Town
+6. Durban
+7. Gqeberha
+8. Clarens
+9. Upington
 
-- Jump: Space, Up, W, click or tap
-- Duck / fast drop: Down, D or mobile duck button
-- Pause: P or Escape
+Each location has its own background, road palette and foreground/parallax treatment. V6.5 adds a progress-timed landmark reveal and ambient-life layer without affecting collision logic.
 
-## Design principles
+## Visual polish
 
-- Endless forward momentum with no upgrade-screen interruptions
-- Readable obstacle silhouettes and fair action transitions
-- Fast restarts and locally persisted best scores
-- Region-specific visual identity without changing collision physics
+The original tarentaal sprite set remains the art direction. V6.5 adds continuous movement transforms, jump wing motion, landing squash/stretch, high-speed feather trails, Krrr-Rush motion ghosts, richer background birds and event reactions around those sprites.
 
+## Audio
 
-## V6.3 visual and control pass
+- Normal run: `assets/audio/dusty_farm_sprint.mp3`
+- Krrr-Rush: `assets/audio/krrr_rush.mp3`
 
-The game now uses a compact top HUD inspired by the approved concept: distance/best on the left, Krrr-Rush in the centre and mielies/multiplier on the right. Phone mode uses a portrait 3:4 frame with landscape gameplay cropped from the left to preserve the player and reaction lane. All duck-under obstacles are comic-style birds.
+The AudioManager cross-fades between the two loops based on Rush state.
+
+## Test
+
+```bash
+npm test
+```

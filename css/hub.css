@@ -84,3 +84,9 @@ footer strong { color:#bdd0ce; }
 @media(min-width:1050px){.game-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.locked-card{grid-column:1/-1}}
 
 .device-selector{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.05);max-width:760px}.device-label{font-size:.82rem;font-weight:900;letter-spacing:.08em;color:#d7ebe7;text-transform:uppercase}.device-buttons{display:flex;gap:8px;flex-wrap:wrap}.device-button{border:1px solid rgba(255,255,255,.18);background:rgba(7,29,37,.62);color:var(--ink);padding:9px 13px;border-radius:999px;font-weight:900;cursor:pointer}.device-button.is-active{background:linear-gradient(135deg,#72e3d5,#20c4ae);color:#071d25;border-color:transparent}.device-helper{margin:0;color:var(--muted);font-size:.85rem;line-height:1.4;flex:1 1 100%}@media(max-width:520px){.device-selector{padding:12px}.device-helper{font-size:.78rem}}
+
+/* Dash-only development mode */
+.disabled-card { opacity:.58; filter:saturate(.65); }
+.disabled-card:hover { transform:none; border-color:var(--line); box-shadow:0 20px 60px rgba(0,0,0,.24); }
+.disabled-button { cursor:not-allowed; user-select:none; background:rgba(255,255,255,.09) !important; color:#a9b5b4 !important; box-shadow:none !important; }
+.disabled-button:hover span { transform:none; }

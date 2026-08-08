@@ -1,5 +1,5 @@
 export const GAME_CONFIG = Object.freeze({
-  version: "6.3.0",
+  version: "6.5.0",
   storageKey: "tarentaalDashV6Best",
   legacyStorageKeys: Object.freeze(["tarentaalDashV5Best", "tarentaalDashV4Best"]),
   canvas: Object.freeze({ width: 1280, height: 720, groundY: 598 }),

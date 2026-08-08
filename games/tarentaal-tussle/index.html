@@ -2,113 +2,28 @@
 <html lang="af">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-  <meta name="theme-color" content="#173b37">
-  <meta name="description" content="Tarentaal Tussle — 'n plaasarena survival roguelite vir jou blaaier.">
-  <title>Tarentaal Tussle</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102f3b">
+  <meta name="robots" content="noindex">
+  <title>Tarentaal Tussle — Tydelik gepauseer</title>
   <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./css/game.css">
+  <style>
+    :root { color-scheme:dark; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at 20% 10%,#17495b 0,transparent 35%),#091f28; color:#f3fbfa; }
+    main { width:min(620px,100%); padding:36px; border:1px solid rgba(255,255,255,.12); border-radius:24px; background:rgba(255,255,255,.06); box-shadow:0 24px 70px rgba(0,0,0,.3); }
+    .eyebrow { margin:0 0 10px; color:#72e3d5; font-weight:900; letter-spacing:.12em; font-size:.75rem; }
+    h1 { margin:0 0 12px; font-size:clamp(2rem,7vw,3.6rem); line-height:.95; }
+    p { color:#c6d8d8; line-height:1.65; }
+    a { display:inline-flex; margin-top:12px; padding:14px 18px; border-radius:14px; background:#72e3d5; color:#071d25; text-decoration:none; font-weight:900; }
+  </style>
 </head>
 <body>
-  <main class="app" aria-label="Tarentaal Tussle">
-    <header class="topbar">
-      <a class="back-link" href="../../">← Speletjies</a>
-      <div class="brand"><strong>Tarentaal Tussle</strong><span>Plaasarena Survival</span></div>
-      <div class="desktop-hint">Beweeg: WASD / pyltjies • Veersprong: Spasie • Pouse: P</div>
-    </header>
-
-    <section class="game-shell">
-      <canvas id="game" width="1280" height="720" aria-label="Tarentaal Tussle speletjie"></canvas>
-
-      <div class="hud" aria-live="polite">
-        <div class="hud-left">
-          <div class="wave-box"><span>GOLF</span><strong id="waveLabel">1 / 10</strong></div>
-          <div class="timer-box"><span>TYD</span><strong id="timerLabel">0:35</strong></div>
-          <div class="kill-box"><span>UIT</span><strong id="killLabel">0</strong></div>
-        </div>
-
-        <div class="hud-centre">
-          <div class="health-line"><div id="healthFill" class="health-fill"></div><strong id="healthLabel">100 / 100</strong></div>
-          <div class="xp-line"><div id="xpFill" class="xp-fill"></div><span id="levelLabel">Vlak 1</span></div>
-        </div>
-
-        <div class="hud-right">
-          <div class="coin-pill">🌽 <strong id="coinLabel">0</strong></div>
-          <button id="pauseButton" class="icon-button" type="button" aria-label="Pouse">⏸</button>
-          <button id="soundButton" class="icon-button" type="button" aria-label="Klank aan of af">🔊</button>
-          <button id="fullscreenButton" class="icon-button" type="button" aria-label="Volskerm">⛶</button>
-        </div>
-
-        <div id="weaponBar" class="weapon-bar"></div>
-        <div id="bossBar" class="boss-wrap hidden"><span id="bossName">DIE GROOT BUL</span><div class="boss-track"><div id="bossFill"></div></div></div>
-        <div id="announcement" class="announcement hidden">GOLF 1</div>
-
-        <div id="joystick" class="joystick" aria-label="Mobiele bewegingsbeheer">
-          <div id="joystickKnob" class="joystick-knob"></div>
-        </div>
-        <button id="dashButton" class="dash-button" type="button"><strong>🪶</strong><span>SPRONG</span></button>
-
-        <div id="startOverlay" class="overlay">
-          <div class="card start-card">
-            <p class="eyebrow">KRRR-KRRR! • NUWE SPELETJIE</p>
-            <h1>Tarentaal<br><span>Tussle</span></h1>
-            <p class="lead">Oorleef tien golwe van plaas-chaos. Jou wapens skiet self — jy moet beweeg, versamel en slim opgradeer.</p>
-            <div class="instruction-grid">
-              <div><strong>BEWEEG</strong><span>WASD, pyltjies of die joystick</span></div>
-              <div><strong>VEERSPRONG</strong><span>Spasie of die mobiele knoppie</span></div>
-              <div><strong>BOU</strong><span>Kies nuwe wapens en talente</span></div>
-            </div>
-            <div class="starter-weapon"><span>Jou beginwapen</span><strong>🌽 Mielieblaster</strong></div>
-            <button id="startButton" class="primary-button" type="button">Betree die arena</button>
-          </div>
-        </div>
-
-        <div id="pauseOverlay" class="overlay hidden">
-          <div class="card compact-card"><p class="eyebrow">DIE PLAAS WAG</p><h2>Gepouseer</h2><p>Druk P, Escape of hervat.</p><button id="resumeButton" class="primary-button" type="button">Hervat</button></div>
-        </div>
-
-        <div id="choiceOverlay" class="overlay hidden" role="dialog" aria-modal="true">
-          <div class="card choice-card">
-            <p id="choiceEyebrow" class="eyebrow">VLAK HOËR</p>
-            <h2 id="choiceTitle">Kies 'n plaastalent</h2>
-            <p id="choiceSubtitle">Maak jou tarentaal gevaarliker.</p>
-            <div id="choiceGrid" class="choice-grid"></div>
-            <p class="choice-hint">Kies 'n kaart • 1, 2 of 3 werk ook</p>
-          </div>
-        </div>
-
-        <div id="shopOverlay" class="overlay hidden" role="dialog" aria-modal="true">
-          <div class="card choice-card shop-card">
-            <p class="eyebrow">TUSSEN GOLWE</p>
-            <h2>Oom Koos se Plaaswinkel</h2>
-            <p>Spandeer mielies, of hou dit vir later. Elke item kan net een keer gekoop word.</p>
-            <div class="shop-balance">Jou mielies: <strong id="shopCoins">0</strong> 🌽</div>
-            <div id="shopGrid" class="choice-grid"></div>
-            <button id="nextWaveButton" class="primary-button" type="button">Begin volgende golf</button>
-          </div>
-        </div>
-
-        <div id="resultOverlay" class="overlay hidden">
-          <div class="card result-card">
-            <p id="resultEyebrow" class="eyebrow">DIE PLAAS HET GEWEN</p>
-            <h2 id="resultTitle">Krrr-krrr!</h2>
-            <div class="result-score"><span>Telling</span><strong id="resultScore">0</strong></div>
-            <div class="result-grid">
-              <div><span>Golf bereik</span><strong id="resultWave">1</strong></div>
-              <div><span>Vyande verslaan</span><strong id="resultKills">0</strong></div>
-              <div><span>Vlak bereik</span><strong id="resultLevel">1</strong></div>
-              <div><span>Beste telling</span><strong id="resultBest">0</strong></div>
-            </div>
-            <div id="resultWeapons" class="result-weapons"></div>
-            <button id="restartButton" class="primary-button" type="button">Probeer weer</button>
-            <a href="../../" class="secondary-link">Terug na Speletjies</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer>V1 • Outomatiese wapens, tien golwe, vlakke, plaaswinkel, base en plaaslike rekord.</footer>
+  <main>
+    <p class="eyebrow">TARENTAAL SPELETJIES • ONTWIKKELING GEPAUSEER</p>
+    <h1>Tarentaal Tussle</h1>
+    <p>Hierdie speletjie is tydelik nie speelbaar nie. Ons fokus tans net op <strong>Tarentaal Dash</strong> en sal later na hierdie konsep terugkeer.</p>
+    <a href="../tarentaal-dash/">Speel Tarentaal Dash →</a>
   </main>
-  <script type="module" src="./js/game.js"></script>
 </body>
 </html>

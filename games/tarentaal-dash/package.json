@@ -1,10 +1,10 @@
 {
   "name": "tarentaal-dash-v6",
-  "version": "6.3.0",
+  "version": "6.5.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check js/config.js && node --check js/assets.js && node --check js/difficulty.js && node --check js/obstacles.js && node --check js/audio.js && node --check js/input.js && node --check js/regions.js && node --check js/environment.js && node --check js/flow.js && node --check js/game.js",
+    "check": "node --check js/config.js && node --check js/assets.js && node --check js/difficulty.js && node --check js/obstacles.js && node --check js/audio.js && node --check js/input.js && node --check js/regions.js && node --check js/environment.js && node --check js/world-polish.js && node --check js/flow.js && node --check js/game.js",
     "test": "npm run check && node tests/spacing.test.mjs && node tests/regions.test.mjs && node tests/environment.test.mjs && node tests/flow.test.mjs && node tests/presentation.test.mjs && node tests/runtime-smoke.test.mjs",
     "test:runtime": "node tests/runtime-smoke.test.mjs"
   }

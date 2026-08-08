@@ -1,60 +1,25 @@
-# Tarentaal Minigame Centre
+# Tarentaal Dash
 
-A static, dependency-free browser game collection designed for GitHub Pages.
+Tarentaal Dash is the only active game in this repository. Tarentaal Tussle and Tarentaal Fladder remain as lightweight paused placeholder pages and are not playable.
 
-## Included games
+## V6.5 — Living Road Edition
 
-- **Tarentaal Dash V6.3 Comic Rush Edition** — the flagship endless runner with four moving South African regions, a permanent dirt road, a compact top HUD, comic bird-only duck obstacles, Krrr-Rush, responsive phone/laptop frames and local records.
-- **Tarentaal Tussle V1** — a top-down arena-survival roguelite with:
-  - ten waves;
-  - four auto-firing weapon systems;
-  - level-up choices;
-  - a between-wave shop;
-  - two boss encounters;
-  - keyboard and mobile joystick controls;
-  - pause, sound and fullscreen controls;
-  - a local best score.
+V6.5 keeps the V6.4 nine-town / 400 m route structure and focuses on presentation, personality and audio polish.
 
-- **Tarentaal Fladder V1** — a farm-themed rhythm-flight game with:
-  - five obstacle styles;
-  - stamina-based flapping;
-  - mielie pickups and near-miss bonuses;
-  - a temporary Veerkrag shield;
-  - changing day/night scenery;
-  - medals and a local best score.
+- More expressive tarentaal motion using the existing character art: continuous stride motion, speed lean, jump wing sweep, landing squash/stretch, Krrr-Rush motion ghosts and rim lighting.
+- Feather particles for near misses, shield saves, impacts, hard landings and high-speed running.
+- Fuller animated background birds instead of simple line silhouettes.
+- Signature landmark reveal near the end of every town leg.
+- Extra ambient life: distant taxis/trucks, coastal wind streaks, lightning, dust devils and animated landmark details.
+- Comic-style tarentaal reactions for towns, near misses, duck bonuses, damage, shields, kilometre milestones and Krrr-Rush.
+- New original `Krrr-Rush` music loop that cross-fades over the normal `Dusty Farm Sprint` theme while Rush is active.
+- Subtle Rush camera push and stronger impact/landing feedback.
+- No changes to obstacle physics, hitboxes or the 400 m route length.
 
-## Deploy to GitHub Pages
+### Route
 
-Upload the contents of this folder to the repository root, replacing the old root files. Then use:
+Pretoria → Bloemfontein → Graaff-Reinet → Mbombela → Cape Town → Durban → Gqeberha → Clarens → Upington → repeat.
 
-1. **Settings → Pages**
-2. **Deploy from a branch**
-3. Select the branch and `/ (root)`
-4. Save
+### Development
 
-The root `index.html` is now the minigame-centre landing page.
-
-## Run locally
-
-Serve the folder with a local web server:
-
-```bash
-python -m http.server 8000
-```
-
-Open `http://localhost:8000`.
-
-## Structure
-
-```text
-/
-├── index.html
-├── css/hub.css
-├── assets/
-└── games/
-    ├── tarentaal-dash/
-    ├── tarentaal-tussle/
-    └── tarentaal-fladder/
-```
-
-All paths are relative and no database, framework or build step is required.
+Run `npm test` from the repository root.

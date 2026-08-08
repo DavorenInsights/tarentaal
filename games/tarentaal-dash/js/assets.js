@@ -32,8 +32,13 @@ export const IMAGE_ASSETS = Object.freeze({
   lowVulture: "./assets/obstacles/low_vulture.svg",
   regionPretoria: "./assets/scenery/regions/pretoria.webp",
   regionBloemfontein: "./assets/scenery/regions/bloemfontein.webp",
-  regionKaroo: "./assets/scenery/regions/karoo.webp",
-  regionLowveld: "./assets/scenery/regions/lowveld.webp"
+  regionGraaffReinet: "./assets/scenery/regions/graaff-reinet.webp",
+  regionMbombela: "./assets/scenery/regions/mbombela.webp",
+  regionCapeTown: "./assets/scenery/regions/cape-town.svg",
+  regionDurban: "./assets/scenery/regions/durban.svg",
+  regionGqeberha: "./assets/scenery/regions/gqeberha.svg",
+  regionClarens: "./assets/scenery/regions/clarens.svg",
+  regionUpington: "./assets/scenery/regions/upington.svg"
 });
 
 export class AssetLoader {
